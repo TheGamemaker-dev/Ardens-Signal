@@ -12,11 +12,13 @@ public class DesktopIcon : MonoBehaviour, IPointerDownHandler
     DoubleClickHandler doubleClickHandler;
 
     bool isHighlighted = false;
+    bool clickedOn = false;
     Color highlightedColor = new Color32(74, 58, 253, 255);
 
     [SerializeField] Sprite icon;
     [SerializeField] string labelText;
-
+    [SerializeField] GameObject windowPrefab;
+#region Setup
     void Awake()
     {
         doubleClickHandler = GetComponent<DoubleClickHandler>();
@@ -45,7 +47,17 @@ public class DesktopIcon : MonoBehaviour, IPointerDownHandler
     void OnDisable(){
         doubleClickHandler.doubleClicked -= OpenWindow;
     }
+#endregion
+    
+#region Behavior
+    void Update(){
+        if(Input.GetMouseButtonDown(0) && !clickedOn){
+            SetHighlighted(false);
+        }
+        clickedOn = false;
+    }
     public void OnPointerDown(PointerEventData eventData){
+        clickedOn = true;
         SetHighlighted(true);
     }
 
@@ -64,4 +76,5 @@ public class DesktopIcon : MonoBehaviour, IPointerDownHandler
     void OpenWindow(){
         Debug.Log("Open window");
     }
+#endregion
 }
