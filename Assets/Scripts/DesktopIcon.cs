@@ -18,6 +18,7 @@ public class DesktopIcon : MonoBehaviour, IPointerDownHandler
     [SerializeField] Sprite icon;
     [SerializeField] string labelText;
     [SerializeField] GameObject windowPrefab;
+    
 #region Setup
     void Awake()
     {
