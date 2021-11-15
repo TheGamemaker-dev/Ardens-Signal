@@ -18,17 +18,21 @@ public class DesktopIcon : MonoBehaviour, IPointerDownHandler
     [SerializeField] Sprite icon;
     [SerializeField] string labelText;
     [SerializeField] GameObject windowPrefab;
-    
-#region Setup
+
+    #region Setup
     void Awake()
     {
         doubleClickHandler = GetComponent<DoubleClickHandler>();
 
         Image[] images = GetComponentsInChildren<Image>();
-        foreach(Image img in images){
-            if(img.gameObject.name == "Icon"){
+        foreach (Image img in images)
+        {
+            if (img.gameObject.name == "Icon")
+            {
                 image = img;
-            } else {
+            }
+            else
+            {
                 textContainer = img;
             }
         }
@@ -39,43 +43,52 @@ public class DesktopIcon : MonoBehaviour, IPointerDownHandler
     {
         doubleClickHandler.doubleClicked += OpenWindow;
     }
-    void Start(){
+    void Start()
+    {
         image.sprite = icon;
         image.color = Color.white;
-        textContainer.color = new Color(0,0,0,0);
+        textContainer.color = new Color(0, 0, 0, 0);
         label.text = labelText;
     }
-    void OnDisable(){
+    void OnDisable()
+    {
         doubleClickHandler.doubleClicked -= OpenWindow;
     }
-#endregion
-    
-#region Behavior
-    void Update(){
-        if(Input.GetMouseButtonDown(0) && !clickedOn){
+    #endregion
+
+    #region Behavior
+    void Update()
+    {
+        if (Input.GetMouseButtonDown(0) && !clickedOn)
+        {
             SetHighlighted(false);
         }
         clickedOn = false;
     }
-    public void OnPointerDown(PointerEventData eventData){
+    public void OnPointerDown(PointerEventData eventData)
+    {
         clickedOn = true;
         SetHighlighted(true);
     }
 
-    void SetHighlighted(bool highlighted){
-        Debug.Log("Highlighted");
-        if(highlighted){
+    void SetHighlighted(bool highlighted)
+    {
+        if (highlighted)
+        {
             image.color = highlightedColor;
             textContainer.color = highlightedColor;
-        } else {
+        }
+        else
+        {
             image.color = Color.white;
-            textContainer.color = new Color(0,0,0,0);
+            textContainer.color = new Color(0, 0, 0, 0);
         }
         isHighlighted = highlighted;
     }
 
-    void OpenWindow(){
+    void OpenWindow()
+    {
         Debug.Log("Open window");
     }
-#endregion
+    #endregion
 }

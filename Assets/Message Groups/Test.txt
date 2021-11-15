@@ -1,0 +1,15 @@
+~FROM:Love Interest
+~FLAGSREQUIRED:logIn
+start:
+	hi!
+	I just made a new thing!
+	Please help me idk what im doing=
+		+I can help|help
+		+Idk either|nohelp
+help:
+~SETFLAG:helped
+	great! tysm!|end
+nohelp:
+	oh, alright then|end
+end:
+~STOP

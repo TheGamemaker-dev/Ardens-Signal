@@ -1,0 +1,8 @@
+no indent: jump marker
+start: start of file
+~STOP: end of file
+indent: message
+=: choice to be made
++: choice
+|...: jump to ...
+~FROM: Who is the message from
