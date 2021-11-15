@@ -11,6 +11,7 @@ GameObject:
   - component: {fileID: 9112295238588704429}
   - component: {fileID: 9112295238588704419}
   - component: {fileID: 9112295238588704418}
+  - component: {fileID: 2637611313689153267}
   m_Layer: 5
   m_Name: Desktop Icon
   m_TagString: Untagged
@@ -66,6 +67,25 @@ MonoBehaviour:
   icon: {fileID: 7482667652216324306, guid: fe270f27099390b4185a10e4bb5b2fe5, type: 3}
   labelText: Label
   windowPrefab: {fileID: 0}
+--- !u!95 &2637611313689153267
+Animator:
+  serializedVersion: 3
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 9112295238588704428}
+  m_Enabled: 1
+  m_Avatar: {fileID: 0}
+  m_Controller: {fileID: 0}
+  m_CullingMode: 0
+  m_UpdateMode: 0
+  m_ApplyRootMotion: 0
+  m_LinearVelocityBlending: 0
+  m_WarningMessage: 
+  m_HasTransformHierarchy: 1
+  m_AllowConstantClipSamplingOptimization: 1
+  m_KeepAnimatorControllerStateOnDisable: 0
 --- !u!1 &9112295238744218311
 GameObject:
   m_ObjectHideFlags: 0
