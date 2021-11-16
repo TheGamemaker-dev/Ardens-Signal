@@ -19,5 +19,7 @@ public class MessageGroup
         this.messages = messages;
         this.instructions = instructions;
         this.lineTypes = lineTypes;
+        this.from = from;
+        this.flagsRequired = flagsRequired;
     }
 }

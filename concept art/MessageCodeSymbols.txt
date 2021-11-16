@@ -6,3 +6,4 @@ indent: message
 +: choice
 |...: jump to ...
 ~FROM: Who is the message from
+~: Instructions

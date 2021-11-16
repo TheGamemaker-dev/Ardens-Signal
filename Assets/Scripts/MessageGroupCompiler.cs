@@ -69,10 +69,14 @@ public static class MessageGroupCompiler
                 switch (instructionsParams[0].RemoveLineBreaks())
                 {
                     case "FROM":
-                        from = instructionsParams[1];
+                        from = instructionsParams[1].RemoveLineBreaks();
                         break;
                     case "FLAGSREQUIRED":
                         string[] flags = instructionsParams[1].Split(',');
+                        for (int j = 0; j < flags.Length; j++)
+                        {
+                            flags[j] = flags[j].RemoveLineBreaks();
+                        }
                         flagsRequired = flags;
                         break;
                     case "SETFLAG":
@@ -91,11 +95,6 @@ public static class MessageGroupCompiler
                 jumps.Add(i, jump);
                 lineTypes.Add(i, "jump");
             }
-        }
-
-        foreach (KeyValuePair<int, string> entry in lineTypes)
-        {
-            Debug.Log(entry.Key.ToString() + ": " + entry.Value);
         }
 
         MessageGroup output = new MessageGroup(fullFile, jumps, messages, instructions, lineTypes, from, flagsRequired);
