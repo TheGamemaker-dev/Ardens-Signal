@@ -17,7 +17,7 @@ public class DesktopIcon : MonoBehaviour, IPointerDownHandler
 
     [SerializeField] Sprite icon;
     [SerializeField] string labelText;
-    [SerializeField] GameObject windowPrefab;
+    [SerializeField] GameObject window;
 
     #region Setup
     void Awake()
@@ -88,7 +88,7 @@ public class DesktopIcon : MonoBehaviour, IPointerDownHandler
 
     void OpenWindow()
     {
-        Debug.Log("Open window");
+        window.SetActive(true);
     }
     #endregion
 }
