@@ -31,7 +31,6 @@ public static class MessageGroupCompiler
                         List<Choice> choices = new List<Choice>();
                         line = line.Remove(line.Length - 1);
                         int lineChangeCheck = 1;
-                        Debug.Log(fullFile[i + lineChangeCheck][2]);
                         while (fullFile[i + lineChangeCheck][2] == '+') //third character of a choice line is always a +
                         {
                             string choiceLine = fullFile[i + lineChangeCheck].Substring(3);
@@ -40,7 +39,6 @@ public static class MessageGroupCompiler
                             Choice choice = new Choice(choiceParams[0].RemoveTabs(), choiceParams[1].RemoveLineBreaks());
                             choices.Add(choice);
                             lineTypes.Add(i + lineChangeCheck, "choice");
-                            Debug.Log(i + lineChangeCheck);
                             lineChangeCheck++;
                         }
                         message.choices = choices.ToArray();
