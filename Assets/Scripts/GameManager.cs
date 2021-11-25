@@ -9,7 +9,7 @@ public class GameManager : MonoBehaviour
     };
 
     List<MessageGroup> allMessages = new List<MessageGroup>();
-    ChatWindow chatWindow;
+    [SerializeField] ChatWindow chatWindow;
 
     static GameManager singleton;
     static UnityAction<string> onFlagSet;

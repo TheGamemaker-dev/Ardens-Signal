@@ -207,6 +207,7 @@ GameObject:
   m_Component:
   - component: {fileID: 6535881190950821393}
   - component: {fileID: 1805277539}
+  - component: {fileID: 169314387}
   m_Layer: 5
   m_Name: Chat Window
   m_TagString: Untagged
@@ -255,6 +256,18 @@ MonoBehaviour:
   messageFromThemPrefab: {fileID: 9134524667460166395, guid: cd5e4006708770b4287f0e9fd1591a9a, type: 3}
   messageFromYouPrefab: {fileID: 289217902631753884, guid: 4a6f30133d4485f478870c6f2caf288b, type: 3}
   optionPrefab: {fileID: 7429533503720763307, guid: 74f7e5185d3f2c74389528e500383858, type: 3}
+--- !u!114 &169314387
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6535881190950821406}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: da4d65ad21ac90043a37e16c3192d5d5, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &6535881191003066547
 GameObject:
   m_ObjectHideFlags: 0

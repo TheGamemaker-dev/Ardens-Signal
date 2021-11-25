@@ -33,6 +33,6 @@ public class WindowTopBar : MonoBehaviour, IBeginDragHandler, IDragHandler
     public void CloseWindow()
     {
         GameObject parent = transform.parent.gameObject;
-        parent.SetActive(false);
+        parent.transform.SetAsFirstSibling();
     }
 }
