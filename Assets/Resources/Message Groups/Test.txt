@@ -1,4 +1,4 @@
-~FROM:Love Interest
+~FROM:Sam
 ~FLAGSREQUIRED:logIn
 start:
 	hi!
@@ -10,6 +10,7 @@ help:
 ~SETFLAG:helped
 	great! tysm!|end
 nohelp:
-	oh, alright then|end
+	oh, alright then
+	well, thank you for trying|end
 end:
 ~STOP

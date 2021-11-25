@@ -88,7 +88,7 @@ public class DesktopIcon : MonoBehaviour, IPointerDownHandler
 
     void OpenWindow()
     {
-        window.SetActive(true);
+        window.transform.SetAsLastSibling();
     }
     #endregion
 }

@@ -1,0 +1,8 @@
+~FROM:AI
+~FLAGSREQUIRED:helped
+start:
+	So I see you helped her
+	good job!
+	Good luck out there, I think you'll need it|end
+end:
+~STOP

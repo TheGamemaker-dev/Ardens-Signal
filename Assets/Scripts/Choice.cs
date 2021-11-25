@@ -4,8 +4,8 @@ using UnityEngine;
 
 public class Choice
 {
-    string choiceMessage;
-    string jumpTo;
+    public string choiceMessage { get; }
+    public string jumpTo { get; }
 
     public Choice(string choiceMessage, string jumpTo)
     {
