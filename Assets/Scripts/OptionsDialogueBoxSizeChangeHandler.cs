@@ -16,12 +16,12 @@ public class OptionsDialogueBoxSizeChangeHandler : MonoBehaviour
     {
         rectTransform = GetComponent<RectTransform>();
         totalSize = dialogueTransform.rect.height + rectTransform.rect.height;
-        Debug.Log(totalSize);
         isReady = true;
     }
 
     void OnRectTransformDimensionsChange()
     {
+        Debug.Log("Change");
         if (isReady)
         {
             float rectHeight = rectTransform.rect.height;

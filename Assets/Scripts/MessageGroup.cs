@@ -11,6 +11,7 @@ public class MessageGroup
     public Dictionary<int, string> lineTypes { get; }
     public string from { get; }
     public string[] flagsRequired { get; }
+    public bool triggered { get; set; }
 
     public MessageGroup(string[] fullFile, Dictionary<int, string> jumps, Dictionary<int, Message> messages, Dictionary<int, string> instructions, Dictionary<int, string> lineTypes, string from, string[] flagsRequired)
     {
@@ -21,6 +22,7 @@ public class MessageGroup
         this.lineTypes = lineTypes;
         this.from = from;
         this.flagsRequired = flagsRequired;
+        this.triggered = false;
     }
 
     public Message NextMessage(Message lastMessage)

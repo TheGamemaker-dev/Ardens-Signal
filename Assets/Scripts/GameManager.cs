@@ -1,5 +1,6 @@
 using UnityEngine;
 using System.Collections.Generic;
+using UnityEngine.Events;
 
 public class GameManager : MonoBehaviour
 {
@@ -8,8 +9,10 @@ public class GameManager : MonoBehaviour
     };
 
     List<MessageGroup> allMessages = new List<MessageGroup>();
+    ChatWindow chatWindow;
 
     static GameManager singleton;
+    static UnityAction<string> onFlagSet;
 
 
     void Awake()
@@ -25,6 +28,15 @@ public class GameManager : MonoBehaviour
         }
     }
 
+    void OnEnable()
+    {
+        onFlagSet += StartMessageGroups;
+    }
+    void OnDisable()
+    {
+        onFlagSet -= StartMessageGroups;
+    }
+
     void Start()
     {
         TextAsset[] allMGFiles = Resources.LoadAll<TextAsset>("Message Groups");
@@ -32,7 +44,8 @@ public class GameManager : MonoBehaviour
         {
             allMessages.Add(MessageGroupCompiler.Compile(groupFile));
         }
-        Debug.Log(Time.deltaTime);
+        chatWindow = FindObjectOfType<ChatWindow>();
+        SetFlag("logIn");
     }
 
     public static void ExecuteInstruction(string instruction)
@@ -47,15 +60,39 @@ public class GameManager : MonoBehaviour
             case "STOP":
                 break;
             case "SETFLAG":
-                if (flags.ContainsKey(instParams[1]))
-                {
-                    flags[instParams[1]] = true;
-                }
-                else
-                {
-                    Debug.LogError("No flag found named " + instParams[1]);
-                }
+                SetFlag(instParams[1]);
                 break;
+        }
+    }
+    static void SetFlag(string flag)
+    {
+        if (flags.ContainsKey(flag))
+        {
+            flags[flag] = true;
+            onFlagSet?.Invoke(flag);
+        }
+        else
+        {
+            Debug.LogError("No flag found named " + flag);
+        }
+    }
+    void StartMessageGroups(string flagSet)
+    {
+        foreach (MessageGroup group in allMessages)
+        {
+            bool canTrigger = true;
+            foreach (string flagNeeded in group.flagsRequired)
+            {
+                if (flags[flagNeeded] == false) //if at least one flag is false
+                {
+                    canTrigger = false;
+                }
+            }
+            if (canTrigger && !group.triggered)
+            {
+                group.triggered = true;
+                chatWindow.StartMessageGroup(group);
+            }
         }
     }
 }
