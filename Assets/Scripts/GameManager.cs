@@ -84,7 +84,7 @@ public class GameManager : MonoBehaviour
                 break;
         }
     }
-    static void SetFlag(string flag)
+    public static void SetFlag(string flag)
     {
         if (flags.ContainsKey(flag))
         {

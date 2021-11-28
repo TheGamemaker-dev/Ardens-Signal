@@ -1,7 +1,7 @@
 ~FROM:Sam
 ~FLAGSREQUIRED:logIn
 start:
-	hi!
+	hi {playerName}!
 	I just made a new thing!
 	Please help me idk what im doing=
 		+I can help|help
