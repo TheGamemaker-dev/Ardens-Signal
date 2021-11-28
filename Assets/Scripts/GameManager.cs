@@ -15,7 +15,7 @@ public class GameManager : MonoBehaviour
     public static GameManager singleton;
     static UnityAction<string> onFlagSet;
 
-    internal string playerName { get; set; }
+    public string playerName;
 
 
     void Awake()
@@ -48,18 +48,14 @@ public class GameManager : MonoBehaviour
         {
             case "Game":
                 chatWindow = FindObjectOfType<ChatWindow>();
+                TextAsset[] allMGFiles = Resources.LoadAll<TextAsset>("Message Groups");
+                foreach (TextAsset groupFile in allMGFiles)
+                {
+                    allMessages.Add(MessageGroupCompiler.Compile(groupFile));
+                }
                 break;
             default:
                 break;
-        }
-    }
-
-    void Start()
-    {
-        TextAsset[] allMGFiles = Resources.LoadAll<TextAsset>("Message Groups");
-        foreach (TextAsset groupFile in allMGFiles)
-        {
-            allMessages.Add(MessageGroupCompiler.Compile(groupFile));
         }
     }
 

@@ -1,6 +1,8 @@
 using System.Text.RegularExpressions;
 using System.Collections.Generic;
 using UnityEngine;
+using System;
+using System.Reflection;
 
 public static class MessageGroupCompiler
 {
@@ -56,6 +58,27 @@ public static class MessageGroupCompiler
                     {
                         message.message = new Regex(@"=+").Replace(line.RemoveTabs(), "").RemoveLineBreaks();
                     }
+                    string messageWithDVar = message.message;
+                    //modify message for dyanmic variables
+                    for (int j = 0; j < message.message.Length; j++)
+                    {
+                        if (message.message[j] == '{')
+                        {
+                            int k = 1;
+                            string variable = "";
+                            while (message.message[j + k] != '}')
+                            {
+                                variable += message.message[j + k];
+                                k++;
+                            }
+                            FieldInfo varInfo = GameManager.singleton.GetType().GetField(variable);
+                            string varValue = varInfo.GetValue(GameManager.singleton).ToString();
+
+                            messageWithDVar = messageWithDVar.Replace("{" + variable + "}", varValue);
+                        }
+                    }
+                    message.message = messageWithDVar;
+
                     messages.Add(i, message);
                     lineTypes.Add(i, "message");
                     i += iChange;
