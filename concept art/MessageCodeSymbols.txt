@@ -7,3 +7,4 @@ indent: message
 |...: jump to ...
 ~FROM: Who is the message from
 ~: Instructions
+{variable}: dynamic variable
