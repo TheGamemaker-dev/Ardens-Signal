@@ -12,7 +12,7 @@ public class GameManager : MonoBehaviour
     List<MessageGroup> allMessages = new List<MessageGroup>();
     ChatWindow chatWindow;
 
-    static GameManager singleton;
+    public static GameManager singleton;
     static UnityAction<string> onFlagSet;
 
     internal string playerName { get; set; }
@@ -63,9 +63,9 @@ public class GameManager : MonoBehaviour
         }
     }
 
-    public void StartGame()
+    public void ChangeScene(string sceneName)
     {
-
+        SceneManager.LoadScene(sceneName);
     }
 
     public static void ExecuteInstruction(string instruction)
