@@ -1,6 +1,7 @@
 using UnityEngine;
 using System.Collections.Generic;
 using UnityEngine.Events;
+using UnityEngine.SceneManagement;
 
 public class GameManager : MonoBehaviour
 {
@@ -9,10 +10,12 @@ public class GameManager : MonoBehaviour
     };
 
     List<MessageGroup> allMessages = new List<MessageGroup>();
-    [SerializeField] ChatWindow chatWindow;
+    ChatWindow chatWindow;
 
     static GameManager singleton;
     static UnityAction<string> onFlagSet;
+
+    internal string playerName { get; set; }
 
 
     void Awake()
@@ -31,10 +34,24 @@ public class GameManager : MonoBehaviour
     void OnEnable()
     {
         onFlagSet += StartMessageGroups;
+        SceneManager.sceneLoaded += OnSceneLoaded;
     }
     void OnDisable()
     {
         onFlagSet -= StartMessageGroups;
+        SceneManager.sceneLoaded -= OnSceneLoaded;
+    }
+
+    void OnSceneLoaded(Scene scene, LoadSceneMode loadSceneMode)
+    {
+        switch (scene.name)
+        {
+            case "Game":
+                chatWindow = FindObjectOfType<ChatWindow>();
+                break;
+            default:
+                break;
+        }
     }
 
     void Start()
@@ -44,8 +61,11 @@ public class GameManager : MonoBehaviour
         {
             allMessages.Add(MessageGroupCompiler.Compile(groupFile));
         }
-        chatWindow = FindObjectOfType<ChatWindow>();
-        SetFlag("logIn");
+    }
+
+    public void StartGame()
+    {
+
     }
 
     public static void ExecuteInstruction(string instruction)
@@ -94,5 +114,10 @@ public class GameManager : MonoBehaviour
                 chatWindow.StartMessageGroup(group);
             }
         }
+    }
+
+    public void Quit()
+    {
+        Application.Quit();
     }
 }

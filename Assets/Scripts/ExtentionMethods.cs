@@ -1,4 +1,5 @@
 using System.Text.RegularExpressions;
+using UnityEngine;
 
 public static class ExtentionMethods
 {
@@ -11,5 +12,14 @@ public static class ExtentionMethods
     public static string RemoveLineBreaks(this string input)
     {
         return sLinebreaks.Replace(input, "");
+    }
+
+    public static Vector2Int Round(this Vector2 input)
+    {
+        int x = Mathf.RoundToInt(input.x);
+        int y = Mathf.RoundToInt(input.y);
+
+        Vector2Int output = new Vector2Int(x, y);
+        return output;
     }
 }
