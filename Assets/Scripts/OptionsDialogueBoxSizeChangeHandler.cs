@@ -21,7 +21,6 @@ public class OptionsDialogueBoxSizeChangeHandler : MonoBehaviour
 
     void OnRectTransformDimensionsChange()
     {
-        Debug.Log("Change");
         if (isReady)
         {
             float rectHeight = rectTransform.rect.height;
