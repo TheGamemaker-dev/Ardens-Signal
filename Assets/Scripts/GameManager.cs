@@ -6,14 +6,14 @@ using UnityEngine.SceneManagement;
 public class GameManager : MonoBehaviour
 {
     public static Dictionary<string, bool> flags = new Dictionary<string, bool>() {
-        {"logIn", false}, {"helped", false}
+        {"logIn", false}, {"aiDownloaded", false}, {"aiSetup", false}
     };
 
     List<MessageGroup> allMessages = new List<MessageGroup>();
     ChatWindow chatWindow;
 
     public static GameManager singleton;
-    static UnityAction<string> onFlagSet;
+    public static UnityAction<string> onFlagSet;
 
     public string playerName;
 

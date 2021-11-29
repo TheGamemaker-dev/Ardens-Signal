@@ -1,0 +1,45 @@
+~FROM:Arden
+~FLAGSREQUIRED:logIn
+start:
+	Hey!=
+		+Hi!|next
+		+Hello there!|next
+		+Hey!|next
+next:
+	How was your day?
+	_It was pretty good=
+		+How was your day?|day
+		+I just had the craziest dream...|dream
+dream:
+	_We were on a date, and we were holding hands
+	That's silly haha you don't even know what I look like! 
+	_I don't have to I already know ur beautiful 
+	awww ur making me blush
+	_so when are we going to meet in person?
+	soon soon I promise|AI
+day:
+	ugh so awful
+	_what happened??
+	parents grounded me again!
+	_for what this time
+	got a C on my math test
+	_oh yikes
+	yeah I know
+	_you know I could always tutor you
+	_I'm great at math
+	I wish but you live like a million miles away
+	_yeah I know |AI
+AI:
+	Anyways I've been working on this thing 
+	and I would love if you tried it
+	_Of course! Send it over
+	Alr sending it now! 
+	it is this super cool AI thing I have been working on
+	my APCS teacher said she'd give me extra credit if it works
+	so I need someone to help me test it
+	_Oh wow that sounds super impressive
+	_I'm excited to download it now
+~SETFLAG:aiDownloaded
+~STOP
+	
+	

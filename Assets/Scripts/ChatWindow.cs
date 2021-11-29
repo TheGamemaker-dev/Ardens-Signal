@@ -16,6 +16,11 @@ public class ChatWindow : MonoBehaviour, IPointerDownHandler
     Dictionary<string, GameObject> dialogueWindows = new Dictionary<string, GameObject>();
     Dictionary<string, ChatSelectable> chatSelectables = new Dictionary<string, ChatSelectable>();
 
+    void OnEnable()
+    {
+        GameManager.onFlagSet += UpdateSelectables;
+    }
+
     void Start()
     {
         foreach (Transform child in transform)
@@ -29,6 +34,19 @@ public class ChatWindow : MonoBehaviour, IPointerDownHandler
         foreach (ChatSelectable selectable in selectables)
         {
             chatSelectables.Add(selectable.gameObject.name, selectable);
+        }
+        chatSelectables["Signal"].gameObject.SetActive(false);
+    }
+
+    void UpdateSelectables(string flag)
+    {
+        switch (flag)
+        {
+            case "aiDownloaded":
+                chatSelectables["Signal"].gameObject.SetActive(true);
+                break;
+            default:
+                break;
         }
     }
 
@@ -84,8 +102,17 @@ public class ChatWindow : MonoBehaviour, IPointerDownHandler
             goto End;
         }
     Choice:
-        Text messageTextComponent = Instantiate(messageFromThemPrefab, dContent.transform).GetComponent<Text>();
-        messageTextComponent.text = currentMessage.message;
+        GameObject objectToInstantiate;
+        if (currentMessage.message[0] != '_')
+        {
+            objectToInstantiate = messageFromThemPrefab;
+        }
+        else
+        {
+            objectToInstantiate = messageFromYouPrefab;
+        }
+        Text messageTextComponent = Instantiate(objectToInstantiate, dContent.transform).GetComponent<Text>();
+        messageTextComponent.text = currentMessage.message.Replace("_", "") + "  ";
         if (currentMessage.choices != null)
         {
             GameObject optionsBox = dContent.transform.parent.parent.GetComponentsInChildren<Transform>().FirstOrDefault(x => x.gameObject.name == "Middle").gameObject;
@@ -103,7 +130,7 @@ public class ChatWindow : MonoBehaviour, IPointerDownHandler
                 {
                     currentMessage = group.NextMessage(currentMessage, j);
                     Text messageFromYouTextComponent = Instantiate(messageFromYouPrefab, dContent.transform).GetComponent<Text>();
-                    messageFromYouTextComponent.text = choice.choiceMessage;
+                    messageFromYouTextComponent.text = choice.choiceMessage + "  ";
                     foreach (Transform child in optionsBox.transform)
                     {
                         Destroy(child.gameObject);
