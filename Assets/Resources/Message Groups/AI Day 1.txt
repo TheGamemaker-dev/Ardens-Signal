@@ -1,0 +1,36 @@
+~FROM:Signal
+~FLAGSREQUIRED:aiDownloaded
+start:
+	Hello, I am Signal, your personal AI assistant.|install
+install:
+	Reply 'install' to install Signal.=
+		+install|yes
+		+no|install
+yes:
+	Installing: 0%
+	Installing: 15%
+	Installing: 25%
+	Installing: 40%
+	Installing: 60%
+	Installing: 85%
+	Installing: 99%
+	E̷͉̬̪̪̮̩̜̯̗̩͍͓̤͛̔̊͐͆͐̇͋̈́͘͘͜͠r̶̼̈́̽͛̑̕r̵̘̜̤̮̭̙̫̘̱͚͊̍̿̇o̷̺̦͉͚̙̪̖̲͙̺͊͑́̏͌̈̍͗͒̊̄̀̑̍ṛ̴̡̑̾͑͊̑̓
+	Done!
+	Thank you for choosing Signal.
+	Hello {playerName}!
+	Let's try some basic commands|weather
+no:
+	Let's try again|weather
+weather:
+	Try asking me about the weather=
+		+What is the weather like?|weatherYes
+		+no|no
+weatherYes:
+	In your area it is currently 68F
+	The high for today is 80F
+	And the low is 64F 
+	That was great! Good job!
+	I need some more time to finalize setup
+	Come back in a bit and so I may further assist you
+~SETFLAG:aiSetup
+~STOP

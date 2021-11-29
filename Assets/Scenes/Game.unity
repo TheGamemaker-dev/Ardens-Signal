@@ -435,6 +435,46 @@ PrefabInstance:
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Arguments.m_ObjectArgumentAssemblyTypeName
       value: UnityEngine.Object, UnityEngine
       objectReference: {fileID: 0}
+    - target: {fileID: 1259964489642091555, guid: 507171bbcdbf933418962d6c69c95ded, type: 3}
+      propertyPath: m_FontData.m_BestFit
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 5567163918777997696, guid: 507171bbcdbf933418962d6c69c95ded, type: 3}
+      propertyPath: m_AnchorMax.x
+      value: 0.5
+      objectReference: {fileID: 0}
+    - target: {fileID: 5567163918777997696, guid: 507171bbcdbf933418962d6c69c95ded, type: 3}
+      propertyPath: m_AnchorMax.y
+      value: 0.5
+      objectReference: {fileID: 0}
+    - target: {fileID: 5567163918777997696, guid: 507171bbcdbf933418962d6c69c95ded, type: 3}
+      propertyPath: m_AnchorMin.x
+      value: 0.5
+      objectReference: {fileID: 0}
+    - target: {fileID: 5567163918777997696, guid: 507171bbcdbf933418962d6c69c95ded, type: 3}
+      propertyPath: m_AnchorMin.y
+      value: 0.5
+      objectReference: {fileID: 0}
+    - target: {fileID: 5567163918777997696, guid: 507171bbcdbf933418962d6c69c95ded, type: 3}
+      propertyPath: m_SizeDelta.x
+      value: 233.15
+      objectReference: {fileID: 0}
+    - target: {fileID: 5567163918777997696, guid: 507171bbcdbf933418962d6c69c95ded, type: 3}
+      propertyPath: m_SizeDelta.y
+      value: 230
+      objectReference: {fileID: 0}
+    - target: {fileID: 5567163918777997696, guid: 507171bbcdbf933418962d6c69c95ded, type: 3}
+      propertyPath: m_AnchoredPosition.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5567163918777997696, guid: 507171bbcdbf933418962d6c69c95ded, type: 3}
+      propertyPath: m_AnchoredPosition.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5567163918777997697, guid: 507171bbcdbf933418962d6c69c95ded, type: 3}
+      propertyPath: m_Sprite
+      value: 
+      objectReference: {fileID: 21300000, guid: d53d0a587a71b3d479ef40202c3a22af, type: 3}
     - target: {fileID: 5567163920182656056, guid: 507171bbcdbf933418962d6c69c95ded, type: 3}
       propertyPath: m_Pivot.x
       value: 0.5
