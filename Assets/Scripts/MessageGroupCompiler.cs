@@ -101,8 +101,8 @@ public static class MessageGroupCompiler
                         flagsRequired = flags;
                         break;
                     case "SETFLAG":
-                        break;
                     case "STOP":
+                    case "PLAYSOUND":
                         break;
                     default:
                         throw new UnityException("Instruction not set properly: " + instructionsParams[0]);

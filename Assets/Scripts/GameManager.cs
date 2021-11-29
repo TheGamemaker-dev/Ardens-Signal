@@ -11,6 +11,8 @@ public class GameManager : MonoBehaviour
 
     List<MessageGroup> allMessages = new List<MessageGroup>();
     ChatWindow chatWindow;
+    CutsceneManager cutsceneManager;
+    int day = 1;
 
     public static GameManager singleton;
     public static UnityAction<string> onFlagSet;
@@ -53,6 +55,8 @@ public class GameManager : MonoBehaviour
                 {
                     allMessages.Add(MessageGroupCompiler.Compile(groupFile));
                 }
+                cutsceneManager = FindObjectOfType<CutsceneManager>();
+                cutsceneManager.StartCutscene(day);
                 break;
             default:
                 break;
@@ -70,13 +74,15 @@ public class GameManager : MonoBehaviour
         switch (instParams[0])
         {
             case "FROM":
-                break;
             case "FLAGSREQUIRED":
-                break;
             case "STOP":
                 break;
             case "SETFLAG":
                 SetFlag(instParams[1]);
+                break;
+            case "PLAYSOUND":
+                string nameOfSound = instParams[1];
+
                 break;
         }
     }
