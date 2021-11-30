@@ -1,0 +1,19 @@
+~FROM:Signal
+~FLAGSREQUIRED:askedOut
+start:
+    Hello, a new application has been installed.
+    In order to open it, reply 8ball.
+    _8ball|8ball
+8ball:
+    Ask any question!=
+        +does arden really love me?|response0
+        +why were you glitching out earlier?|response1
+        +should i surprise arden with a plane ticket?|response2
+response0:
+    Very doubtful.
+response1:
+    Reply hazy, try again.
+response2:
+    My sources say no.
+~SETFLAG:8ball
+~STOP

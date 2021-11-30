@@ -1,0 +1,10 @@
+~FROM:Arden
+~FLAGSREQUIRED:8ball
+start:
+    soooo what did you ask?
+    _it's a secret ;)
+    hmph ok fine
+    well i have to wake up early tomorrow
+    _oh ok gn :(
+    gn :)
+~STOP
