@@ -1,0 +1,22 @@
+no indent: jump marker
+start: start of file
+~STOP: end of file
+indent: message
+=: choice to be made
++: choice
+|: jump to
+~FROM: Who is the message from
+~: Instructions
+{variable}: dynamic variable
+
+Available Instructions:
+STOP
+PLAYSOUND
+SETFLAG
+FROM
+FLAGSREQUIRED
+
+notes:
+FROM and FLAGSREQUIRED must be the first two lines, in that order
+every choice is expected to have a jump, if there is no branch, just set a jump after the choices
+and have all choices jump to there

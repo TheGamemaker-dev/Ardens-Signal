@@ -12,6 +12,7 @@ public class GameManager : MonoBehaviour
     List<MessageGroup> allMessages = new List<MessageGroup>();
     ChatWindow chatWindow;
     CutsceneManager cutsceneManager;
+    AudioManager audioManager;
     int day = 1;
 
     public static GameManager singleton;
@@ -57,6 +58,7 @@ public class GameManager : MonoBehaviour
                 }
                 cutsceneManager = FindObjectOfType<CutsceneManager>();
                 cutsceneManager.StartCutscene(day);
+                audioManager = FindObjectOfType<AudioManager>();
                 break;
             default:
                 break;
@@ -68,7 +70,7 @@ public class GameManager : MonoBehaviour
         SceneManager.LoadScene(sceneName);
     }
 
-    public static void ExecuteInstruction(string instruction)
+    public void ExecuteInstruction(string instruction)
     {
         string[] instParams = instruction.Split(':');
         switch (instParams[0])
@@ -82,7 +84,7 @@ public class GameManager : MonoBehaviour
                 break;
             case "PLAYSOUND":
                 string nameOfSound = instParams[1];
-
+                audioManager.PlaySound(nameOfSound);
                 break;
         }
     }

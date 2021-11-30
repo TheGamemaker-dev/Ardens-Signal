@@ -35,7 +35,7 @@ AI:
 	_Of course! Send it over
 	Alr sending it now! 
 	it is this super cool AI thing I have been working on
-	my APCS teacher said she'd give me extra credit if it works
+	my APCS teacher said she'd give me extra credit
 	so I need someone to help me test it
 	_Oh wow that sounds super impressive
 	_I'm excited to download it now

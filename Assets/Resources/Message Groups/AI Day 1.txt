@@ -14,6 +14,7 @@ yes:
 	Installing: 60%
 	Installing: 85%
 	Installing: 99%
+~PLAYSOUND:Electric Sizzle
 	E̷͉̬̪̪̮̩̜̯̗̩͍͓̤͛̔̊͐͆͐̇͋̈́͘͘͜͠r̶̼̈́̽͛̑̕r̵̘̜̤̮̭̙̫̘̱͚͊̍̿̇o̷̺̦͉͚̙̪̖̲͙̺͊͑́̏͌̈̍͗͒̊̄̀̑̍ṛ̴̡̑̾͑͊̑̓
 	Done!
 	Thank you for choosing Signal.

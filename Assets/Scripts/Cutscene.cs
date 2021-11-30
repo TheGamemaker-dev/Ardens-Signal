@@ -8,4 +8,8 @@ public class Cutscene : MonoBehaviour
     {
         gameObject.SetActive(false);
     }
+    public void PlaySound(string soundName)
+    {
+        FindObjectOfType<AudioManager>().PlaySound(soundName);
+    }
 }

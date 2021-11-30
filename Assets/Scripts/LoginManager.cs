@@ -7,7 +7,7 @@ public class LoginManager : MonoBehaviour
 {
 
     [SerializeField] InputField passwordField;
-    [SerializeField] Text nameText;
+    [SerializeField] Text nameText, errorText;
 
     // Start is called before the first frame update
     void Start()
@@ -21,6 +21,10 @@ public class LoginManager : MonoBehaviour
         {
             GameManager.SetFlag("logIn");
             Destroy(gameObject);
+        }
+        else
+        {
+            errorText.text = "Password is incorrect";
         }
     }
 }

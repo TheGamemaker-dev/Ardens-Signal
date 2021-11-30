@@ -5,7 +5,7 @@ start:
 		+Yup! Completely installed|next
 next:
 	Yay! Thank you so much!
-	Ugh oh parents found out I was still awake...
+	Uh oh parents found out I was still awake...
 	_aww ok gn <3
 	gn <3
 ~STOP

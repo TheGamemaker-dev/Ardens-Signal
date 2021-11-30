@@ -75,7 +75,7 @@ public class MessageGroup
             switch (nextLineType)
             {
                 case "instruction":
-                    GameManager.ExecuteInstruction(instructions[nextIndex]);
+                    GameManager.singleton.ExecuteInstruction(instructions[nextIndex]);
                     if (instructions[nextIndex] == "STOP")
                     {
                         goto Stop;
