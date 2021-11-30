@@ -72,11 +72,13 @@ public class AudioManager : MonoBehaviour
         AudioSource source = Instantiate(soundPrefab, transform).GetComponent<AudioSource>();
         playingSources.Add(source);
         source.clip = startClip;
+        source.volume = 0.25f;
 
         AudioSource source2 = Instantiate(soundPrefab, transform).GetComponent<AudioSource>();
         playingSources.Add(source2);
         source2.clip = ambientClip;
         source2.loop = true;
+        source2.volume = 0.25f;
 
         source2.PlayScheduled(AudioSettings.dspTime + startClip.length - 1f);
         source.Play();
@@ -89,9 +91,11 @@ public class AudioManager : MonoBehaviour
     public IEnumerator StopAmbientSound(string soundName)
     {
         AudioSource source = playingSources.First(x => x.clip == sfxs[soundName + " (ambient)"]);
+        source.volume = 0.25f;
         AudioClip endClip = sfxs[soundName + " (end)"];
 
         AudioSource source1 = Instantiate(soundPrefab, transform).GetComponent<AudioSource>();
+        source1.volume = 0.25f;
         source1.clip = endClip;
 
         source1.PlayScheduled(AudioSettings.dspTime + 1.0f);

@@ -5,7 +5,7 @@ start:
 	you haven't been responding to my texts lately=
 		+hey sorry ive been MIA|next
 next:
-	_school's been so busy between the play, my classes, and soccer...
+	_school's been so busy between everything...
 	_it has been just crazy
 	wow look who decides to finally show up
 	_im sorry im sorry ok?
@@ -15,7 +15,7 @@ next:
 		+well to be honest...|truth
 		+it has been running super smoothly|lie
 truth:
-	_my computer has been glitching a lot since i downloaded it
+	_my computer has been glitching a lot since i installed it
 	_Signal also keeps repeating the same question :/
 	oh man really? ill look into it :(
 	damn i really thought i got it right this time|askOut

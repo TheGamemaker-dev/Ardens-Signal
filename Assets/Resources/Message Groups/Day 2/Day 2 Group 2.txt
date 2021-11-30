@@ -38,7 +38,7 @@ reject:
 	oh uh yeah i see that's already
 	_yeah sorry ill keep trying to convince them tho :(|8ball
 8ball:
-	oh btw you should try the magic 8 ball feature i added to signal!
+	oh btw you should try the magic 8 ball feature i added!
 	_yeah ill try it right now
 	yay cool
 ~SETFLAG:askedOut
