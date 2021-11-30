@@ -16,6 +16,5 @@ error:
 ~PLAYSOUND: Flatline
     _restart
 ~PLAYSOUND:Notification Buzz
-~PLAYSOUND:Notification Buzz
 ~SETFLAG:aiRestart
 ~STOP
