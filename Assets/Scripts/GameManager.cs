@@ -6,7 +6,16 @@ using UnityEngine.SceneManagement;
 public class GameManager : MonoBehaviour
 {
     public static Dictionary<string, bool> flags = new Dictionary<string, bool>() {
-        {"logIn", false}, {"aiDownloaded", false}, {"aiSetup", false}
+        {"logIn", false},
+        {"aiDownloaded", false},
+        {"aiSetup", false},
+        {"day1Done", false},
+        {"day2Start", false},
+        {"day2Done", false},
+        {"askedOut", false},
+        {"aiRestart", false},
+        {"dream", false},
+        {"8ball", false}
     };
 
     List<MessageGroup> allMessages = new List<MessageGroup>();
@@ -92,6 +101,7 @@ public class GameManager : MonoBehaviour
     {
         if (flags.ContainsKey(flag))
         {
+            Debug.Log("Flag set: " + flag);
             flags[flag] = true;
             onFlagSet?.Invoke(flag);
         }
@@ -107,7 +117,15 @@ public class GameManager : MonoBehaviour
             bool canTrigger = true;
             foreach (string flagNeeded in group.flagsRequired)
             {
-                if (flags[flagNeeded] == false) //if at least one flag is false
+                string flag = flagNeeded;
+                bool mustBeTrue = true;
+                if (flag[0] == '!')
+                {
+                    mustBeTrue = false;
+                    flag = flag.Substring(1);
+                }
+
+                if (flags[flag] == !mustBeTrue) //if at least one flag is incorrect
                 {
                     canTrigger = false;
                 }
@@ -120,7 +138,7 @@ public class GameManager : MonoBehaviour
         }
     }
 
-    public void Quit()
+    public static void Quit()
     {
         Application.Quit();
     }

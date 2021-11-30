@@ -11,6 +11,7 @@ next:
 		+How was your day?|day
 		+I just had the craziest dream...|dream
 dream:
+~SETFLAG:dream
 	_We were on a date, and we were holding hands
 	That's silly haha you don't even know what I look like! 
 	_I don't have to I already know ur beautiful 

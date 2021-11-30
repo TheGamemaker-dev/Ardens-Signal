@@ -8,4 +8,5 @@ next:
 	Uh oh parents found out I was still awake...
 	_aww ok gn <3
 	gn <3
+~SETFLAG:day1Done
 ~STOP

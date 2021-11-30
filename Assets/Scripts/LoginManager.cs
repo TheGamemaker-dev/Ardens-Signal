@@ -20,6 +20,7 @@ public class LoginManager : MonoBehaviour
         if (passwordField.text == "password")
         {
             GameManager.SetFlag("logIn");
+            FindObjectOfType<AudioManager>().PlaySound("Accomplishment");
             Destroy(gameObject);
         }
         else
