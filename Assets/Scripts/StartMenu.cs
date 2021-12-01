@@ -8,9 +8,13 @@ public class StartMenu : MonoBehaviour
     [SerializeField] InputField inputField;
     [SerializeField] Button submit;
 
+    AudioManager manager;
+
     void Start()
     {
         UpdateButton("");
+        manager = FindObjectOfType<AudioManager>();
+        manager.PlaySound("Dream");
     }
 
     public void UpdateButton(string value)

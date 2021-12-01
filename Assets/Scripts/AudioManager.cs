@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 using System;
+using UnityEngine.SceneManagement;
 
 public class AudioManager : MonoBehaviour
 {
@@ -11,10 +12,22 @@ public class AudioManager : MonoBehaviour
 
     List<AudioSource> playingSources = new List<AudioSource>();
 
-    string[] ambientSounds = { "Fan Whirring" };
+    string[] ambientSounds = { "Fan Whirring", "Dream" };
+
+    static AudioManager manager;
 
     void Awake()
     {
+        if (manager == null)
+        {
+            manager = this;
+            DontDestroyOnLoad(gameObject);
+        }
+        else if (manager != this)
+        {
+            Destroy(gameObject);
+            return;
+        }
         AudioClip[] audioClips = Resources.LoadAll<AudioClip>("Sound Effects");
         foreach (AudioClip clip in audioClips)
         {
@@ -91,17 +104,20 @@ public class AudioManager : MonoBehaviour
     public IEnumerator StopAmbientSound(string soundName)
     {
         AudioSource source = playingSources.First(x => x.clip == sfxs[soundName + " (ambient)"]);
-        source.volume = 0.25f;
         AudioClip endClip = sfxs[soundName + " (end)"];
 
         AudioSource source1 = Instantiate(soundPrefab, transform).GetComponent<AudioSource>();
         source1.volume = 0.25f;
         source1.clip = endClip;
 
+        Debug.Log("Before play scheduled");
+
         source1.PlayScheduled(AudioSettings.dspTime + 1.0f);
 
-        yield return new WaitForSeconds(1.0f);
+        Debug.Log("after play scheduled");
+        yield return new WaitForSecondsRealtime(1);
 
+        Debug.Log(source.clip.name);
         playingSources.Remove(source);
         Destroy(source.gameObject);
 
@@ -122,10 +138,28 @@ public class AudioManager : MonoBehaviour
     void OnEnable()
     {
         GameManager.onFlagSet += OnDayEnd;
+        SceneManager.activeSceneChanged += delegate { StopAllAmbientSounds(); };
     }
 
     void OnDisable()
     {
         GameManager.onFlagSet -= OnDayEnd;
+        SceneManager.activeSceneChanged -= delegate { StopAllAmbientSounds(); };
+    }
+
+    void StopAllAmbientSounds()
+    {
+        List<string> sounds = new List<string>();
+        foreach (AudioSource source in playingSources)
+        {
+            sounds.Add(source.clip.name);
+        }
+        foreach (string sound in ambientSounds)
+        {
+            if (sounds.Contains(sound + " (ambient)"))
+            {
+                StartCoroutine(StopAmbientSound(sound));
+            }
+        }
     }
 }
