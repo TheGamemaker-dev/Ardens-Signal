@@ -11,6 +11,9 @@ public class Painting : MonoBehaviour, IPointerDownHandler, IDragHandler
     RawImage rawImage;
     Canvas canvas;
     RectTransform rectTransform;
+    bool firstFrame = true;
+    Vector2 lastMousePos, currentMousePos;
+    float paintScaleFactor = 4f;
 
     // Start is called before the first frame update
     void Start()
@@ -22,9 +25,18 @@ public class Painting : MonoBehaviour, IPointerDownHandler, IDragHandler
         float width = rectTransform.rect.width;
         float height = rectTransform.rect.height;
         float scale = canvas.scaleFactor;
+        scale /= paintScaleFactor;
 
         texture2D = new Texture2D(Mathf.RoundToInt(scale * width), Mathf.RoundToInt(scale * height));
         rawImage.texture = texture2D;
+
+        List<Color> initialColors = new List<Color>();
+        for (int i = 0; i < texture2D.width * texture2D.height; i++)
+        {
+            initialColors.Add(Color.white);
+        }
+        texture2D.SetPixels(0, 0, texture2D.width, texture2D.height, initialColors.ToArray());
+        texture2D.Apply();
     }
 
     void Paint(Vector2Int pos, Color color, int radius)
@@ -34,66 +46,54 @@ public class Painting : MonoBehaviour, IPointerDownHandler, IDragHandler
         {
             colors.Add(color);
         }
-        texture2D.SetPixels(pos.x, pos.y, radius, radius, colors.ToArray());
+        texture2D.SetPixels(pos.x - (radius / 2), pos.y - (radius / 2), radius, radius, colors.ToArray());
         texture2D.Apply();
     }
 
+    void Update()
+    {
+        if (firstFrame)
+        {
+            currentMousePos = Input.mousePosition;
+            firstFrame = false;
+        }
+        else
+        {
+            lastMousePos = currentMousePos;
+            currentMousePos = Input.mousePosition;
+        }
+    }
     public void OnPointerDown(PointerEventData data)
     {
         Vector2 imagePos = rectTransform.position;
         Vector2 pos = data.position - imagePos;
+        pos /= paintScaleFactor;
 
         Vector2Int posInt = pos.Round();
 
-        Debug.Log(pos);
-
-        Paint(posInt, Color.black, 15);
+        Paint(posInt, Color.black, 2);
     }
 
     public void OnDrag(PointerEventData data)
     {
         Vector2 imagePos = rectTransform.position;
         Vector2 pos = data.position - imagePos;
+        pos /= paintScaleFactor;
 
-        Vector2 delta = data.delta;
+        Vector2 delta = data.delta / paintScaleFactor;
         Vector2 lastPos = pos - delta;
 
-        int signH = Mathf.RoundToInt(Mathf.Sign(delta.x));
-        int signV = Mathf.RoundToInt(Mathf.Sign(delta.y));
+        int size = 5;
 
-        float slope;
-        slope = delta.y / delta.x;
+        int steps = Mathf.RoundToInt(Mathf.Max(Mathf.Abs(delta.x), Mathf.Abs(delta.y)));
 
-        if (slope == float.PositiveInfinity)
+        for (int i = 0; i < steps; i++)
         {
-            slope = Mathf.PI;
-        }
-
-        float stepX;
-        if (Mathf.Abs(slope) <= 1)
-        {
-            stepX = 1 * Mathf.Sign(slope); //step by x
-        }
-        else if (slope == Mathf.PI)
-        {
-            while (Math.Sign(pos.y - lastPos.y) == signV)
-            {
-                Paint(lastPos.Round(), Color.black, 15);
-                lastPos = lastPos + Vector2.up;
-            }
-            return;
-        }
-        else
-        {
-            stepX = 1 / slope; //step by y
+            float t = (1f / steps) * i;
+            Vector2 drawPos = Vector2.Lerp(lastPos, pos, t);
+            Paint(drawPos.Round(), Color.black, size);
         }
 
-        float stepY = stepX * slope;
-        Vector2 step = new Vector2(stepX, stepY);
-        while (Mathf.Sign(pos.x - lastPos.x) == signH)
-        {
-            Paint(lastPos.Round(), Color.black, 15);
-            lastPos += step;
-        }
+        return;
     }
 }
