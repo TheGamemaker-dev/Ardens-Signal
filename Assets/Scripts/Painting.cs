@@ -11,15 +11,18 @@ public class Painting : MonoBehaviour, IPointerDownHandler, IDragHandler
     RawImage rawImage;
     Canvas canvas;
     RectTransform rectTransform;
+    PaintWindow paintWindow;
     bool firstFrame = true;
     Vector2 lastMousePos, currentMousePos;
-    float paintScaleFactor = 4f;
+    float paintScaleFactor = 2f;
+    int size = 8;
 
     // Start is called before the first frame update
     void Start()
     {
         canvas = FindObjectOfType<Canvas>();
         rawImage = GetComponent<RawImage>();
+        paintWindow = FindObjectOfType<PaintWindow>();
         rectTransform = transform as RectTransform;
 
         float width = rectTransform.rect.width;
@@ -39,14 +42,30 @@ public class Painting : MonoBehaviour, IPointerDownHandler, IDragHandler
         texture2D.Apply();
     }
 
-    void Paint(Vector2Int pos, Color color, int radius)
+    void Paint(Vector2Int pos, Color color, int diameter)
     {
         List<Color> colors = new List<Color>();
-        for (int i = 0; i < radius * radius; i++)
+
+        for (int i = 0; i < diameter * diameter; i++)
         {
-            colors.Add(color);
+            int x = (i % diameter) - (diameter / 2);
+            int y = (Mathf.FloorToInt(i / diameter)) - (diameter / 2);
+            float sqrDistance = new Vector2(x, y).sqrMagnitude;
+
+            if (sqrDistance < Mathf.Pow(diameter / 2, 2))
+            {
+                colors.Add(color);
+            }
+            else
+            {
+                int absoluteX = pos.x + x;
+                int absolutey = pos.y + y;
+
+                Color colorToAdd = texture2D.GetPixel(absoluteX, absolutey);
+                colors.Add(colorToAdd);
+            }
         }
-        texture2D.SetPixels(pos.x - (radius / 2), pos.y - (radius / 2), radius, radius, colors.ToArray());
+        texture2D.SetPixels(pos.x - (diameter / 2), pos.y - (diameter / 2), diameter, diameter, colors.ToArray());
         texture2D.Apply();
     }
 
@@ -71,7 +90,7 @@ public class Painting : MonoBehaviour, IPointerDownHandler, IDragHandler
 
         Vector2Int posInt = pos.Round();
 
-        Paint(posInt, Color.black, 2);
+        Paint(posInt, paintWindow.isPaintMode ? paintWindow.currentColor : Color.white, size);
     }
 
     public void OnDrag(PointerEventData data)
@@ -83,7 +102,6 @@ public class Painting : MonoBehaviour, IPointerDownHandler, IDragHandler
         Vector2 delta = data.delta / paintScaleFactor;
         Vector2 lastPos = pos - delta;
 
-        int size = 5;
 
         int steps = Mathf.RoundToInt(Mathf.Max(Mathf.Abs(delta.x), Mathf.Abs(delta.y)));
 
@@ -91,7 +109,7 @@ public class Painting : MonoBehaviour, IPointerDownHandler, IDragHandler
         {
             float t = (1f / steps) * i;
             Vector2 drawPos = Vector2.Lerp(lastPos, pos, t);
-            Paint(drawPos.Round(), Color.black, size);
+            Paint(drawPos.Round(), paintWindow.isPaintMode ? paintWindow.currentColor : Color.white, size);
         }
 
         return;
