@@ -563,8 +563,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 0, y: 0}
-  m_AnchoredPosition: {x: -8.281105, y: 0.000015258789}
-  m_SizeDelta: {x: 183.2184, y: 128}
+  m_AnchoredPosition: {x: -8.281105, y: -6.5153}
+  m_SizeDelta: {x: 183.2184, y: 139.846}
   m_Pivot: {x: 0, y: 0}
 --- !u!222 &994587867
 CanvasRenderer:
@@ -1827,6 +1827,7 @@ GameObject:
   m_Component:
   - component: {fileID: 992220195837281634}
   - component: {fileID: 1984184500}
+  - component: {fileID: 4990662560684670129}
   m_Layer: 5
   m_Name: Paint Window
   m_TagString: Untagged
@@ -1887,6 +1888,18 @@ MonoBehaviour:
   - {fileID: 1513636876}
   - {fileID: 2022708747}
   - {fileID: 1901252208}
+--- !u!114 &4990662560684670129
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 992220195837281635}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: da4d65ad21ac90043a37e16c3192d5d5, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &3397985381420577701
 GameObject:
   m_ObjectHideFlags: 0
