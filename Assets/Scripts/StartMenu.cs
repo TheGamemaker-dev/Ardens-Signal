@@ -14,7 +14,7 @@ public class StartMenu : MonoBehaviour
     {
         UpdateButton("");
         manager = FindObjectOfType<AudioManager>();
-        manager.PlaySound("Dream");
+        manager.PlaySound("Dream", true);
     }
 
     public void UpdateButton(string value)

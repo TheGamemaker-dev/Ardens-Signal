@@ -19,13 +19,19 @@ public class LoginManager : MonoBehaviour
     {
         if (passwordField.text == "password")
         {
-            GameManager.SetFlag("logIn");
-            FindObjectOfType<AudioManager>().PlaySound("Accomplishment");
-            Destroy(gameObject);
+            Invoke("SetLogInFlag", 2);
+            FindObjectOfType<AudioManager>().PlaySound("Accomplishment", false);
+            gameObject.transform.SetAsFirstSibling();
         }
         else
         {
             errorText.text = "Password is incorrect";
         }
+    }
+
+    void SetLogInFlag()
+    {
+        GameManager.SetFlag("logIn");
+        Destroy(gameObject);
     }
 }

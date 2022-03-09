@@ -35,32 +35,31 @@ public class AudioManager : MonoBehaviour
         }
     }
 
-    public void PlaySound(string clipName)
-    {
-        string[] clipParams = clipName.Split('|');
 
-        if (Array.IndexOf(ambientSounds, clipParams[0]) == -1)
+
+    public void PlaySound(string name, bool loop)
+    {
+        bool isAmbient = false;
+        foreach (string sound in ambientSounds)
         {
-            AudioSource source = Instantiate(soundPrefab, transform).GetComponent<AudioSource>();
-            if (clipParams.Length == 2)
+            if (name == sound)
             {
-                if (clipParams[1] == "loop")
-                {
-                    source.loop = true;
-                }
+                isAmbient = true;
+                break;
             }
-            else
-            {
-                source.loop = false;
-            }
-            source.clip = sfxs[clipParams[0]];
-            playingSources.Add(source);
-            source.Play();
-            StartCoroutine(DestroySound(source));
+        }
+        if (isAmbient)
+        {
+            StartCoroutine(PlayAmbientSound(name));
         }
         else
         {
-            StartCoroutine(PlayAmbientSound(clipParams[0]));
+            AudioSource source = Instantiate(soundPrefab, transform).GetComponent<AudioSource>();
+            source.loop = loop;
+            source.clip = sfxs[name];
+            playingSources.Add(source);
+            source.Play();
+            StartCoroutine(DestroySound(source));
         }
     }
     IEnumerator DestroySound(AudioSource source)
@@ -110,11 +109,8 @@ public class AudioManager : MonoBehaviour
         source1.volume = 0.25f;
         source1.clip = endClip;
 
-        Debug.Log("Before play scheduled");
-
         source1.PlayScheduled(AudioSettings.dspTime + 1.0f);
 
-        Debug.Log("after play scheduled");
         yield return new WaitForSecondsRealtime(1);
 
         Debug.Log(source.clip.name);

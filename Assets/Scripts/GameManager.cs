@@ -93,7 +93,7 @@ public class GameManager : MonoBehaviour
                 break;
             case "PLAYSOUND":
                 string nameOfSound = instParams[1];
-                audioManager.PlaySound(nameOfSound);
+                audioManager.PlaySound(nameOfSound, false);
                 break;
         }
     }

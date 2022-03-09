@@ -15,6 +15,7 @@ public class ChatWindow : MonoBehaviour, IPointerDownHandler
     bool wasClickedOn = false;
     Dictionary<string, GameObject> dialogueWindows = new Dictionary<string, GameObject>();
     Dictionary<string, ChatSelectable> chatSelectables = new Dictionary<string, ChatSelectable>();
+    AudioManager audioManager;
 
     void OnEnable()
     {
@@ -36,6 +37,7 @@ public class ChatWindow : MonoBehaviour, IPointerDownHandler
             chatSelectables.Add(selectable.gameObject.name, selectable);
         }
         chatSelectables["Signal"].gameObject.SetActive(false);
+        audioManager = FindObjectOfType<AudioManager>();
     }
 
     void UpdateSelectables(string flag)
@@ -106,6 +108,10 @@ public class ChatWindow : MonoBehaviour, IPointerDownHandler
         if (currentMessage.message[0] != '_')
         {
             objectToInstantiate = messageFromThemPrefab;
+            if (!wasLastClickedOn)
+            {
+                audioManager.PlaySound("Text Notification", false);
+            }
         }
         else
         {
@@ -113,6 +119,7 @@ public class ChatWindow : MonoBehaviour, IPointerDownHandler
         }
         Text messageTextComponent = Instantiate(objectToInstantiate, dContent.transform).GetComponent<Text>();
         messageTextComponent.text = currentMessage.message.Replace("_", "") + "  ";
+
         if (currentMessage.choices != null)
         {
             GameObject optionsBox = dContent.transform.parent.parent.GetComponentsInChildren<Transform>().FirstOrDefault(x => x.gameObject.name == "Middle").gameObject;

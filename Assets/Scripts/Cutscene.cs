@@ -11,7 +11,7 @@ public class Cutscene : MonoBehaviour
     }
     public void PlaySound(string soundName)
     {
-        FindObjectOfType<AudioManager>().PlaySound(soundName);
+        FindObjectOfType<AudioManager>().PlaySound(soundName, false);
     }
     public void SetFlag(string flag)
     {
