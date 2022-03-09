@@ -113,7 +113,6 @@ public class AudioManager : MonoBehaviour
 
         yield return new WaitForSecondsRealtime(1);
 
-        Debug.Log(source.clip.name);
         playingSources.Remove(source);
         Destroy(source.gameObject);
 

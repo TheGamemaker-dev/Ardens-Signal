@@ -24,6 +24,7 @@ public class ChatWindow : MonoBehaviour, IPointerDownHandler
 
     void Start()
     {
+        //Get all dialogue windows
         foreach (Transform child in transform)
         {
             if (child.gameObject.CompareTag("Dialogue Window"))
@@ -31,27 +32,43 @@ public class ChatWindow : MonoBehaviour, IPointerDownHandler
                 dialogueWindows.Add(child.gameObject.name, child.gameObject);
             }
         }
+
+        //get all selectables
         ChatSelectable[] selectables = FindObjectsOfType<ChatSelectable>();
         foreach (ChatSelectable selectable in selectables)
         {
             chatSelectables.Add(selectable.gameObject.name, selectable);
         }
-        chatSelectables["Signal"].gameObject.SetActive(false);
+
+        //set selectable chats based on flags
+        foreach (string flag in GameManager.flags.Keys)
+        {
+            UpdateSelectables(flag);
+        }
+
+        //Get AudioManager
         audioManager = FindObjectOfType<AudioManager>();
     }
 
     void UpdateSelectables(string flag)
     {
+        //Certain selectables require flags to appear in the chat
         switch (flag)
         {
             case "aiDownloaded":
-                chatSelectables["Signal"].gameObject.SetActive(true);
+                chatSelectables["Signal"].gameObject.SetActive(GameManager.flags[flag]);
                 break;
             default:
                 break;
         }
     }
 
+    //keeping track of if the window was the last thing to be clicked
+    public void OnPointerDown(PointerEventData data)
+    {
+        wasLastClickedOn = true;
+        wasClickedOn = true;
+    }
     void Update()
     {
         if (!wasClickedOn && Input.GetMouseButtonDown(0))
@@ -60,11 +77,7 @@ public class ChatWindow : MonoBehaviour, IPointerDownHandler
         }
         wasClickedOn = false;
     }
-    public void OnPointerDown(PointerEventData data)
-    {
-        wasLastClickedOn = true;
-        wasClickedOn = true;
-    }
+
 
     public void StartMessageGroup(MessageGroup group)
     {
@@ -99,11 +112,13 @@ public class ChatWindow : MonoBehaviour, IPointerDownHandler
         {
             currentMessage = group.NextMessage(currentMessage);
         }
+
         if (currentMessage.message == null)
         {
             goto End;
         }
     Choice:
+        //messages sent from the player start with an underscore
         GameObject objectToInstantiate;
         if (currentMessage.message[0] != '_')
         {
@@ -123,8 +138,10 @@ public class ChatWindow : MonoBehaviour, IPointerDownHandler
         if (currentMessage.choices != null)
         {
             GameObject optionsBox = dContent.transform.parent.parent.GetComponentsInChildren<Transform>().FirstOrDefault(x => x.gameObject.name == "Middle").gameObject;
+
             RectTransform rectTransform = (RectTransform)optionsBox.transform;
             rectTransform.sizeDelta = new Vector2(rectTransform.sizeDelta.x, 15 * currentMessage.choices.Length);
+
             for (int i = 0; i < currentMessage.choices.Length; i++)
             {
                 Choice choice = currentMessage.choices[i];
