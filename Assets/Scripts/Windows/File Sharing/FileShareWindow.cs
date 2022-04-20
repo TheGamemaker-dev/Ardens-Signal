@@ -10,17 +10,19 @@ public class FileShareWindow : MonoBehaviour
     //Can send files from paint or file system to others
     //can switch between shared files and incoming files
 
-    [SerializeField] SharedFile[] incomingFiles;
-    [SerializeField] Sprite[] fileImages;
+    public Sprite[] fileImages;
+
+    [SerializeField] IncomingFile[] incomingFiles;
     [SerializeField] GameObject sharedFileParent, incomingFilesParent;
     [SerializeField] GameObject sharedFilePrefab;
 
     void Start()
     {
-        if (fileImages.Length != Enum.GetNames(typeof(SharedFile.SharedFileType)).Length)
+        if (fileImages.Length != Enum.GetNames(typeof(IncomingFile.SharedFileType)).Length)
         {
             Debug.LogError("fileImages length does not match SharedFileTypes length");
         }
+        UpdateFileList("signalSent");
     }
 
     void OnEnable()
@@ -35,25 +37,24 @@ public class FileShareWindow : MonoBehaviour
 
     void UpdateFileList(string flagSet)
     {
-        foreach (SharedFile file in incomingFiles)
+        foreach (IncomingFile file in incomingFiles)
         {
             if (!file.visible && flagSet == file.flagNeeded)
             {
-                GameObject fileInstance = Instantiate(sharedFilePrefab, incomingFilesParent.transform);
-                fileInstance.GetComponent<Image>().sprite = fileImages[((int)file.type)];
-                fileInstance.GetComponentInChildren<Text>().text = file.name;
-                file.visible = true;
+                IncomingFileUIInstance fileInstance = Instantiate(sharedFilePrefab, incomingFilesParent.transform).GetComponent<IncomingFileUIInstance>();
+                fileInstance.SetFileRep(file);
             }
         }
+        incomingFilesParent.GetComponent<Text>().text = incomingFilesParent.transform.childCount == 0 ? "No files have been shared with you, check back later!" : "";
     }
 }
 
 [Serializable]
-public class SharedFile
+public class IncomingFile
 {
     public enum SharedFileType { Singal, Paint, Other };
     public SharedFileType type;
     public string name;
-    public string flagNeeded; //the flags needed for the file to show in the window
+    public string flagNeeded = null; //the flags needed for the file to show in the window
     internal bool downloaded, visible;
 }
