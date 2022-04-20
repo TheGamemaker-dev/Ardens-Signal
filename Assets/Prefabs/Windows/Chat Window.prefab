@@ -823,13 +823,75 @@ PrefabInstance:
       propertyPath: m_Text
       value: Arden
       objectReference: {fileID: 0}
-    m_RemovedComponents: []
+    - target: {fileID: 6188933320091898911, guid: 6d8bcd8d66c45a84498f771eb40824d0, type: 3}
+      propertyPath: m_Color.a
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6188933320091898911, guid: 6d8bcd8d66c45a84498f771eb40824d0, type: 3}
+      propertyPath: m_Color.b
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 6188933320091898911, guid: 6d8bcd8d66c45a84498f771eb40824d0, type: 3}
+      propertyPath: m_Color.g
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 6188933320091898911, guid: 6d8bcd8d66c45a84498f771eb40824d0, type: 3}
+      propertyPath: m_Color.r
+      value: 1
+      objectReference: {fileID: 0}
+    m_RemovedComponents:
+    - {fileID: 8911234292658989030, guid: 6d8bcd8d66c45a84498f771eb40824d0, type: 3}
   m_SourcePrefab: {fileID: 100100000, guid: 6d8bcd8d66c45a84498f771eb40824d0, type: 3}
+--- !u!114 &745439997 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 3232117175799978921, guid: 6d8bcd8d66c45a84498f771eb40824d0, type: 3}
+  m_PrefabInstance: {fileID: 3232117175323040084}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5f7201a12d95ffc409449d95f23cf332, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!1 &472098915 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 3232117175526502711, guid: 6d8bcd8d66c45a84498f771eb40824d0, type: 3}
+  m_PrefabInstance: {fileID: 3232117175323040084}
+  m_PrefabAsset: {fileID: 0}
 --- !u!224 &472098916 stripped
 RectTransform:
   m_CorrespondingSourceObject: {fileID: 3232117175526502704, guid: 6d8bcd8d66c45a84498f771eb40824d0, type: 3}
   m_PrefabInstance: {fileID: 3232117175323040084}
   m_PrefabAsset: {fileID: 0}
+--- !u!114 &3731502309300317756
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 472098915}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 57d8acabebd82eb4e934f046e535cdd3, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  clicked:
+    m_PersistentCalls:
+      m_Calls:
+      - m_Target: {fileID: 3731502309300317756}
+        m_TargetAssemblyTypeName: ChatSelectable, Assembly-CSharp
+        m_MethodName: Selected
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
+  selectedColor: {r: 0.65199995, g: 0.530632, b: 0.31047618, a: 0}
+  status: {fileID: 745439997}
 --- !u!1001 &6535881191801234241
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -1107,13 +1169,59 @@ PrefabInstance:
       propertyPath: m_FontData.m_Alignment
       value: 0
       objectReference: {fileID: 0}
-    m_RemovedComponents: []
+    m_RemovedComponents:
+    - {fileID: 8911234292658989030, guid: 6d8bcd8d66c45a84498f771eb40824d0, type: 3}
   m_SourcePrefab: {fileID: 100100000, guid: 6d8bcd8d66c45a84498f771eb40824d0, type: 3}
+--- !u!1 &8533991588862914079 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 3232117175526502711, guid: 6d8bcd8d66c45a84498f771eb40824d0, type: 3}
+  m_PrefabInstance: {fileID: 6535881191976492840}
+  m_PrefabAsset: {fileID: 0}
 --- !u!224 &8533991588862914072 stripped
 RectTransform:
   m_CorrespondingSourceObject: {fileID: 3232117175526502704, guid: 6d8bcd8d66c45a84498f771eb40824d0, type: 3}
   m_PrefabInstance: {fileID: 6535881191976492840}
   m_PrefabAsset: {fileID: 0}
+--- !u!114 &8533991589126947969 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 3232117175799978921, guid: 6d8bcd8d66c45a84498f771eb40824d0, type: 3}
+  m_PrefabInstance: {fileID: 6535881191976492840}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5f7201a12d95ffc409449d95f23cf332, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!114 &4144247573899876010
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8533991588862914079}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 57d8acabebd82eb4e934f046e535cdd3, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  clicked:
+    m_PersistentCalls:
+      m_Calls:
+      - m_Target: {fileID: 4144247573899876010}
+        m_TargetAssemblyTypeName: ChatSelectable, Assembly-CSharp
+        m_MethodName: Selected
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
+  selectedColor: {r: 0.65199995, g: 0.530632, b: 0.31047618, a: 0}
+  status: {fileID: 8533991589126947969}
 --- !u!1001 &6537538871703891336
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -1219,7 +1327,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 6537538870057823056, guid: 7f6134459a3d54647931d4719998fc38, type: 3}
       propertyPath: m_Value
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 6537538870057823071, guid: 7f6134459a3d54647931d4719998fc38, type: 3}
       propertyPath: m_SizeDelta.x
