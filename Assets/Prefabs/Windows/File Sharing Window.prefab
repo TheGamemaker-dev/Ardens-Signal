@@ -298,13 +298,14 @@ GameObject:
   m_Component:
   - component: {fileID: 3331021149767784436}
   - component: {fileID: 3331021149767784439}
+  - component: {fileID: 538523019055022312}
   m_Layer: 5
   m_Name: File Sharing Window
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &3331021149767784436
 RectTransform:
   m_ObjectHideFlags: 0
@@ -349,6 +350,18 @@ MonoBehaviour:
   sharedFileParent: {fileID: 3331021150329720303}
   incomingFilesParent: {fileID: 3331021149815758024}
   sharedFilePrefab: {fileID: 5528418112958532603, guid: 3a0513ea12ebf134597428f69a01ef03, type: 3}
+--- !u!114 &538523019055022312
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3331021149767784437}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: da4d65ad21ac90043a37e16c3192d5d5, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &3331021149815758024
 GameObject:
   m_ObjectHideFlags: 0
