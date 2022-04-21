@@ -7,6 +7,7 @@ public class GameManager : MonoBehaviour
 {
     public static Dictionary<string, bool> flags = new Dictionary<string, bool>() {
         {"logIn", false},
+        {"downloadAi", false},
         {"aiDownloaded", false},
         {"aiSetup", false},
         {"day1Done", false},

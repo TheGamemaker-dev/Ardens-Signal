@@ -341,8 +341,11 @@ MonoBehaviour:
   fileImages:
   - {fileID: 21300000, guid: 78723232763dc8a4f8701a5efdee3897, type: 3}
   - {fileID: 21300000, guid: 3fede9bf6d87606478bd62923a2a5a01, type: 3}
-  - {fileID: 21300000, guid: dd6e0ba181dd5f741878d548602e0669, type: 3}
-  incomingFiles: []
+  - {fileID: 21300000, guid: 1e646870e3710004d83ac2d0fcd50c49, type: 3}
+  incomingFiles:
+  - type: 0
+    name: Signal.exe
+    flagNeeded: downloadAi
   sharedFileParent: {fileID: 3331021150329720303}
   incomingFilesParent: {fileID: 3331021149815758024}
   sharedFilePrefab: {fileID: 5528418112958532603, guid: 3a0513ea12ebf134597428f69a01ef03, type: 3}

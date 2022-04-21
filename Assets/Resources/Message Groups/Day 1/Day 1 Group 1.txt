@@ -32,14 +32,13 @@ day:
 	_yeah I know |AI
 AI:
 	Anyways I've been working on this thing 
+	it's this super cool AI thing I have been working on
+	my APCS teacher said she'd give me extra credit
+	_Oh wow that sounds super impressive
+	so I need someone to help me test it
 	and I would love if you tried it
 	_Of course! Send it over
 	Alr sending it now! 
-	it is this super cool AI thing I have been working on
-	my APCS teacher said she'd give me extra credit
-	so I need someone to help me test it
-	_Oh wow that sounds super impressive
-	_I'm excited to download it now
 ~SETFLAG:downloadAi
 ~STOP
 	
