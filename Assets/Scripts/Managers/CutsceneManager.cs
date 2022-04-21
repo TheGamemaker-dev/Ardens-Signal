@@ -1,16 +1,18 @@
-using System.Collections;
-using System.Collections.Generic;
-using System.Linq;
 using UnityEngine;
 using UnityEngine.Events;
+using UnityEngine.Video;
+using System.Collections;
 
 public class CutsceneManager : MonoBehaviour
 {
-    Cutscene[] cutsceneParents;
     public UnityAction cutsceneStarted;
+
+    [SerializeField] VideoClip[] cutscenes; //in chronological order
+
+    VideoPlayer player;
     void Awake()
     {
-        cutsceneParents = FindObjectsOfType<Cutscene>();
+        player = GetComponent<VideoPlayer>();
     }
     void OnEnable()
     {
@@ -20,15 +22,23 @@ public class CutsceneManager : MonoBehaviour
     {
         GameManager.onFlagSet -= OnEndDay;
     }
-    public void StartCutscene(int day)
+    public IEnumerator StartCutscene(int day)
     {
-        if (day >= 4) return;
+        if (day >= 4) yield break;
         cutsceneStarted?.Invoke();
+        player.clip = cutscenes[day - 1];
         transform.SetAsLastSibling();
-        GameObject cutsceneParent = cutsceneParents.FirstOrDefault(x => x.gameObject.name.RemoveWhitespace() == "Day" + day.ToString()).gameObject;
-        cutsceneParent.SetActive(true);
-        Animator animator = cutsceneParent.GetComponent<Animator>();
-        animator.SetTrigger("fire");
+        if (day == 1)
+        {
+            yield return new WaitForSeconds(13);
+            AudioManager.singleton.PlaySound("Fan Whirring", false);
+            yield return new WaitForSeconds(((float)player.clip.length - 13));
+        }
+        else
+        {
+            yield return new WaitForSeconds(((float)player.clip.length));
+        }
+        transform.SetAsFirstSibling();
     }
     void OnEndDay(string dayDone)
     {
@@ -37,7 +47,7 @@ public class CutsceneManager : MonoBehaviour
 
         if (hasProperSyntax && hasNum)
         {
-            StartCutscene(day + 1);
+            StartCoroutine(StartCutscene(day + 1));
         }
     }
 }

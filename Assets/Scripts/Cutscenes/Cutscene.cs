@@ -19,6 +19,6 @@ public class Cutscene : MonoBehaviour
     }
     public void ChangeScene(string scene)
     {
-        SceneManager.LoadScene(scene);
+        GameManager.singleton.ChangeScene(scene);
     }
 }

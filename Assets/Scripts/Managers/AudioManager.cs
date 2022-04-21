@@ -14,16 +14,16 @@ public class AudioManager : MonoBehaviour
 
     string[] ambientSounds = { "Fan Whirring", "Dream" };
 
-    static AudioManager manager;
+    public static AudioManager singleton;
 
     void Awake()
     {
-        if (manager == null)
+        if (singleton == null)
         {
-            manager = this;
+            singleton = this;
             DontDestroyOnLoad(gameObject);
         }
-        else if (manager != this)
+        else if (singleton != this)
         {
             Destroy(gameObject);
             return;

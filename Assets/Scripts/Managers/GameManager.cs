@@ -23,7 +23,6 @@ public class GameManager : MonoBehaviour
     ChatWindow chatWindow;
     CutsceneManager cutsceneManager;
     AudioManager audioManager;
-    int day = 1;
 
     public static GameManager singleton;
     public static UnityAction<string> onFlagSet;
@@ -67,7 +66,7 @@ public class GameManager : MonoBehaviour
                     allMessages.Add(MessageGroupCompiler.Compile(groupFile));
                 }
                 cutsceneManager = FindObjectOfType<CutsceneManager>();
-                cutsceneManager.StartCutscene(day);
+                StartCoroutine(cutsceneManager.StartCutscene(1));
                 audioManager = FindObjectOfType<AudioManager>();
                 break;
             default:
