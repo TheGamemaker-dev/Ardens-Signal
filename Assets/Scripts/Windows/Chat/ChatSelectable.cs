@@ -8,17 +8,17 @@ public class ChatSelectable : Selectable
 
     public Text status;
 
-    PeopleList peopleList;
+    ListButtons peopleList;
     // Start is called before the first frame update
     public override void Start()
     {
         base.Start();
-        peopleList = FindObjectOfType<PeopleList>();
+        peopleList = GetComponentInParent<ListButtons>();
     }
 
 
     public void Selected()
     {
-        peopleList.ShowConversation(gameObject.name);
+        peopleList.ShowList(gameObject.name);
     }
 }

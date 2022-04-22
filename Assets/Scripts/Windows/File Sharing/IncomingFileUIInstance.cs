@@ -6,12 +6,14 @@ using UnityEngine.UI;
 public class IncomingFileUIInstance : MonoBehaviour
 {
     [SerializeField] Button button;
+
     IncomingFile file;
+    FileShareWindow fileShareWindow;
 
     // Start is called before the first frame update
     void Start()
     {
-
+        fileShareWindow = FindObjectOfType<FileShareWindow>();
     }
 
     // Update is called once per frame
@@ -31,5 +33,14 @@ public class IncomingFileUIInstance : MonoBehaviour
     {
         GetComponent<Animator>().SetTrigger("download");
         file.downloaded = true;
+        if (file.downloadedFlag != "")
+        {
+            Invoke("SetDownloadedFlag", fileShareWindow.downloadAnim.length);
+        }
+    }
+
+    void SetDownloadedFlag()
+    {
+        GameManager.SetFlag(file.downloadedFlag);
     }
 }

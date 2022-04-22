@@ -38,7 +38,6 @@ AI:
 	so I need someone to help me test it
 	and I would love if you tried it
 	_Of course! Send it over
-	Alr sending it now! 
+	Alr sending it now through File Share! 
 ~SETFLAG:downloadAi
 ~STOP
-	

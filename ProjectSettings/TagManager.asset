@@ -6,6 +6,7 @@ TagManager:
   tags:
   - Dialogue Window
   - Files Window
+  - File Sys Window
   layers:
   - Default
   - TransparentFX

@@ -5,12 +5,12 @@ using UnityEngine;
 public class ShareListSelectable : Selectable
 {
     // Start is called before the first frame update
-    FileList peopleList;
+    ListButtons peopleList;
     // Start is called before the first frame update
     public override void Start()
     {
         base.Start();
-        peopleList = FindObjectOfType<FileList>();
+        peopleList = transform.parent.gameObject.GetComponentInChildren<ListButtons>();
     }
 
 

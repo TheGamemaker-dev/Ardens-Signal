@@ -11,6 +11,7 @@ public class FileShareWindow : MonoBehaviour
     //can switch between shared files and incoming files
 
     public Sprite[] fileImages;
+    public AnimationClip downloadAnim;
 
     [SerializeField] IncomingFile[] incomingFiles;
     [SerializeField] GameObject sharedFileParent, incomingFilesParent;
@@ -54,7 +55,7 @@ public class IncomingFile
 {
     public enum SharedFileType { Singal, Paint, Other };
     public SharedFileType type;
-    public string name;
+    public string name, downloadedFlag;
     public string flagNeeded = null; //the flags needed for the file to show in the window
     internal bool downloaded, visible;
 }

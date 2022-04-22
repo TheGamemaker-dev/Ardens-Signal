@@ -10,7 +10,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1641458721}
   - component: {fileID: 1641458722}
-  - component: {fileID: 7677115312105890071}
+  - component: {fileID: 8351270449263097908}
   m_Layer: 5
   m_Name: People List
   m_TagString: Untagged
@@ -65,7 +65,7 @@ MonoBehaviour:
   m_ChildScaleWidth: 0
   m_ChildScaleHeight: 0
   m_ReverseArrangement: 0
---- !u!114 &7677115312105890071
+--- !u!114 &8351270449263097908
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -74,9 +74,11 @@ MonoBehaviour:
   m_GameObject: {fileID: 1641458720}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 5c583a164726f1e4e8531fe0b5fa0c86, type: 3}
+  m_Script: {fileID: 11500000, guid: 08ef3078c571ed64ca18864a96d78b38, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  listTag: Dialogue Window
+  listsParent: {fileID: 6535881190950821393}
 --- !u!1 &4472305870875679031
 GameObject:
   m_ObjectHideFlags: 0
@@ -890,7 +892,8 @@ MonoBehaviour:
           m_StringArgument: 
           m_BoolArgument: 0
         m_CallState: 2
-  selectedColor: {r: 0.65199995, g: 0.530632, b: 0.31047618, a: 0}
+  selectedColor: {r: 0.65199995, g: 0.530632, b: 0.31047618, a: 1}
+  unselectedColor: {r: 0, g: 0, b: 0, a: 0}
   status: {fileID: 745439997}
 --- !u!1001 &6535881191801234241
 PrefabInstance:
@@ -1220,7 +1223,8 @@ MonoBehaviour:
           m_StringArgument: 
           m_BoolArgument: 0
         m_CallState: 2
-  selectedColor: {r: 0.65199995, g: 0.530632, b: 0.31047618, a: 0}
+  selectedColor: {r: 0.65199995, g: 0.530632, b: 0.31047618, a: 1}
+  unselectedColor: {r: 0, g: 0, b: 0, a: 0}
   status: {fileID: 8533991589126947969}
 --- !u!1001 &6537538871703891336
 PrefabInstance:
