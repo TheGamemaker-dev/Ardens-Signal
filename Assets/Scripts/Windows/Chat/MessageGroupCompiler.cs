@@ -37,8 +37,16 @@ public static class MessageGroupCompiler
                         {
                             string choiceLine = fullFile[i + lineChangeCheck].Substring(3);
                             string[] choiceParams = choiceLine.Split('|');
+                            Choice choice;
 
-                            Choice choice = new Choice(choiceParams[0].RemoveTabs(), choiceParams[1].RemoveLineBreaks());
+                            if (choiceParams.Length == 1)
+                            {
+                                choice = new Choice(choiceParams[0].RemoveTabs(), "");
+                            }
+                            else
+                            {
+                                choice = new Choice(choiceParams[0].RemoveTabs(), choiceParams[1].RemoveLineBreaks());
+                            }
                             choices.Add(choice);
                             lineTypes.Add(i + lineChangeCheck, "choice");
                             lineChangeCheck++;

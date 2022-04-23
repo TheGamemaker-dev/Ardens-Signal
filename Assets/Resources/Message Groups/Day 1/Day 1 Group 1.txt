@@ -6,12 +6,12 @@ start:
 		+hello there!|next
 		+hey!|next
 next:
-	how was your day?
-	_it was pretty good=
-		+how was your day?|day
-		+i just had the craziest dream...|dream
+	how was your day?=
+		+it was pretty good|day
+		+it was really weird|dream
 dream:
 ~SETFLAG:dream
+	_i had this crazy dream
 	_we were on a date, and we were holding hands
 	that's silly haha you don't even know what i look like!=
 		+i don't have to I already know ur beautiful
@@ -20,6 +20,7 @@ dream:
 	_so when are we going to meet in person?
 	soon soon I promise|AI
 day:
+	_how was your day?
 	ugh so awful=
 		+what happened??
 		+oh no why's that :(

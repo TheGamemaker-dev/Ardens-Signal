@@ -60,7 +60,16 @@ public class MessageGroup
 
         Choice choiceChosen = message.choices[choiceIndex];
         string jump = choiceChosen.jumpTo;
-        int jumpIndex = jumps.FirstOrDefault(x => x.Value == jump).Key;
+        int jumpIndex;
+
+        if (jump == "")
+        {
+            jumpIndex = messages.FirstOrDefault(x => x.Value == message).Key + message.choices.Length;
+        }
+        else
+        {
+            jumpIndex = jumps.FirstOrDefault(x => x.Value == jump).Key;
+        }
 
         return GetNextMessageFromLine(jumpIndex);
     }
