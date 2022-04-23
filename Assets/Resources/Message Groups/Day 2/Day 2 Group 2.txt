@@ -3,43 +3,81 @@
 start:
 	hey..r u ok?
 	you haven't been responding to my texts lately=
+		+ahh i havent gotten a chance to respond
 		+hey sorry ive been MIA|next
 next:
 	_school's been so busy between the play, my classes, and soccer...
 	_it has been just crazy
-	wow look who decides to finally show up
-	_im sorry im sorry ok?
+	wow look who decides to finally show up=
+		+im sorry im sorry ok?
+		+sorry i didn't mean to ghost you like that
 	_i promise ill make it up to you ;)
-	ok ok i forgive you
-	hey so how has Signal been working?=
+	ok ok i forgive you=
+		+i'll make sure it doesn't happen again!
+		+phew thanks for understanding Arden
+promise:
+	it's okay i'm just teasing you!=
+		+hey you scared me for a sec!
+		+oh so youre not upset?
+	don't worryy
+	i have a lot on my plate too, so i get it=
+		+well looks like we're in the same boat haha
+		+we'll get through it together!|checkup
+thanks:
+	of course, i was just teasing anyways!=
+		+hey you scared me for a sec!
+		+oh so youre not upset?
+	don't worryy
+	i have a lot on my plate too, so i get it=
+		+well looks like we're in the same boat haha
+		+we'll get through it together!|checkup
+checkup:
+	yep hehe!
+	oh how has Signal been working?=
 		+well to be honest...|truth
 		+it has been running super smoothly|lie
 truth:
 	_my computer has been glitching a lot since i downloaded it
 	_Signal also keeps repeating the same question over and over again :/
 	oh man really? ill look into it :(
-	damn i really thought i got it right this time|askOut
+	damn i really thought i got it right this time=
+		+i'm sure you can fix it, i believe in you!
+		+it's ok what you have so far is so impressive already!
+	thanks that's really comforting hehe=
+		+of course!
+		+thats great!|askOut
 lie:
 	_you did amazing :)
 	oh wow im so glad!
-	was worried there for a sec ;)|askOut
+	was worried there for a sec ;)=
+		+i loved it so much!
+		+it worked so well!
+	thanks that makes me really happy=
+		+of course!
+		+thats great!|askOut
 askOut:
-	so hey I was thinking 
-	maybe if i were ever to visit your neck of the woods
-	would you want to maybe go on a date=
+	well anyways...=
+		+yeah?
+		+whats up!
+	i was just thinking 
+	if i were ever to visit your neck of the woods
+	would you maybe want to go on a date?=
 		+definitely!|accept
-		+hmm idk|reject
+		+hmm i'm not sure|reject
 accept:
 	_omg i can't wait
 	me too!|8ball
 reject:
 	_my parents are still super against me dating...
 	_ur kind of a big secret
-	oh uh yeah i see that's already
-	_yeah sorry ill keep trying to convince them tho :(|8ball
+	oh that's right, damn :(=
+		+maybe one day...
+		+i'm sorry i'll try to figure out something
+	yeah i hope we can see each other at some point!|8ball
 8ball:
-	oh btw you should try the magic 8 ball feature i added!
-	_yeah ill try it right now
-	yay cool
+	oh btw you should try the magic 8 ball feature i added!=
+		+yeah ill try it right now
+		+woah thats so cool ill take a look
+	yay cool!
 ~SETFLAG:askedOut
 ~STOP

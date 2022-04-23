@@ -2,11 +2,13 @@
 ~FLAGSREQUIRED:8ball
 start:
 	soooo what did you ask?=
+		+well if i tell you that ruins the fun!
 		+it's a secret ;)|next
 next:
 	hmph ok fine
-	well i have to wake up early tomorrow
-	_oh ok gn :(
-	gn :)
+	well i have to wake up early tomorrow=
+	+awe ok gn :(
+	+alright sleep well!
+	gn talk to you tomorrow!
 ~SETFLAG:day2Done
 ~STOP

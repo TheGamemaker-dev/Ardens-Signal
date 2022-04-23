@@ -1,11 +1,14 @@
 ~FROM:Arden
 ~FLAGSREQUIRED:aiSetup
 start:
-	Have you finished installing it yet?=
-		+Yup! Completely installed|next
+	have you finished installing it yet?=
+		+yup! completely installed
+		+it glitched out a bit, but yeah...|next
 next:
-	Yay! Thank you so much!
-	Uh oh parents found out I was still awake...
+	yay! thank you so much!
+	+of course!
+	+yeah i can't wait to try it!
+	uh oh parents found out I was still awake...
 	_aww ok gn <3
 	gn <3
 ~SETFLAG:day1Done
