@@ -24,8 +24,18 @@ public class CutsceneManager : MonoBehaviour
     }
     public IEnumerator StartCutscene(int day)
     {
-        if (day >= 4) yield break;
-        cutsceneStarted?.Invoke();
+        Fade fade = FindObjectOfType<Fade>();
+        if (day != 1)
+        {
+            cutsceneStarted?.Invoke();
+            fade.FadeOut();
+            yield return new WaitForSeconds(fade.length + 2);
+        }
+        if (day >= 3)
+        {
+            GameManager.singleton.ChangeScene("Demo");
+            yield break;
+        }
         player.clip = cutscenes[day - 1];
         transform.SetAsLastSibling();
         if (day == 1)
@@ -37,6 +47,8 @@ public class CutsceneManager : MonoBehaviour
         else
         {
             yield return new WaitForSeconds(((float)player.clip.length));
+            GameManager.SetFlag("day" + day.ToString() + "Start");
+            fade.FadeIn();
         }
         transform.SetAsFirstSibling();
     }

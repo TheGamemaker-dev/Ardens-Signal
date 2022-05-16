@@ -26,4 +26,17 @@ public class StartMenu : MonoBehaviour
     {
         GameManager.singleton.playerName = inputField.text;
     }
+
+    public void StartGame()
+    {
+        StartCoroutine(DoStartGame());
+    }
+
+    IEnumerator DoStartGame()
+    {
+        Fade fade = FindObjectOfType<Fade>();
+        fade.FadeOut();
+        yield return new WaitForSeconds(fade.length + 2);
+        GameManager.singleton.ChangeScene("Game");
+    }
 }

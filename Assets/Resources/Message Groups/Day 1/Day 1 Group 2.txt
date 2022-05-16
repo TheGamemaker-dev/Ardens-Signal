@@ -2,12 +2,12 @@
 ~FLAGSREQUIRED:aiSetup
 start:
 	have you finished installing it yet?=
-		+yup! completely installed
+		+yup! completely installed|next
 		+it glitched out a bit, but yeah...|next
 next:
-	yay! thank you so much!
-	+of course!
-	+yeah i can't wait to try it!
+	yay! thank you so much!=
+		+of course!
+		+yeah i can't wait to try it!
 	uh oh parents found out I was still awake...
 	_aww ok gn <3
 	gn <3

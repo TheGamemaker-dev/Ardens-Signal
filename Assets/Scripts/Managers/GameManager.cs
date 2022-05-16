@@ -13,6 +13,7 @@ public class GameManager : MonoBehaviour
         {"day1Done", false},
         {"day2Start", false},
         {"day2Done", false},
+        {"day3Start", false},
         {"askedOut", false},
         {"aiRestart", false},
         {"dream", false},

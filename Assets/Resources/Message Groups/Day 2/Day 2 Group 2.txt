@@ -3,7 +3,7 @@
 start:
 	hey..r u ok?
 	you haven't been responding to my texts lately=
-		+ahh i havent gotten a chance to respond
+		+ahh i havent gotten a chance to respond|next
 		+hey sorry ive been MIA|next
 next:
 	_school's been so busy between the play, my classes, and soccer...
@@ -13,15 +13,15 @@ next:
 		+sorry i didn't mean to ghost you like that
 	_i promise ill make it up to you ;)
 	ok ok i forgive you=
-		+i'll make sure it doesn't happen again!
-		+phew thanks for understanding Arden
+		+i'll make sure it doesn't happen again!|promise
+		+phew thanks for understanding Arden|thanks
 promise:
 	it's okay i'm just teasing you!=
 		+hey you scared me for a sec!
 		+oh so youre not upset?
 	don't worryy
 	i have a lot on my plate too, so i get it=
-		+well looks like we're in the same boat haha
+		+well looks like we're in the same boat haha|checkup
 		+we'll get through it together!|checkup
 thanks:
 	of course, i was just teasing anyways!=
@@ -29,7 +29,7 @@ thanks:
 		+oh so youre not upset?
 	don't worryy
 	i have a lot on my plate too, so i get it=
-		+well looks like we're in the same boat haha
+		+well looks like we're in the same boat haha|checkup
 		+we'll get through it together!|checkup
 checkup:
 	yep hehe!
@@ -44,7 +44,7 @@ truth:
 		+i'm sure you can fix it, i believe in you!
 		+it's ok what you have so far is so impressive already!
 	thanks that's really comforting hehe=
-		+of course!
+		+of course!|askOut
 		+thats great!|askOut
 lie:
 	_you did amazing :)
