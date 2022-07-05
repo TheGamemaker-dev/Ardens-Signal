@@ -9,7 +9,7 @@ public class FileUIInstance : MonoBehaviour
     DoubleClickHandler handler;
     File curFile;
 
-    private void Start()
+    private void Awake()
     {
         handler = GetComponent<DoubleClickHandler>();
     }
@@ -27,7 +27,9 @@ public class FileUIInstance : MonoBehaviour
     public void SetFileRep(File file)
     {
         curFile = file;
-        GetComponent<Image>().sprite = FindObjectOfType<FileSystemWindow>().fileImages[(int)file.type];
+        GetComponent<Image>().sprite = FindObjectOfType<FileSystemWindow>().fileImages[
+            (int)file.type
+        ];
         GetComponentInChildren<Text>().text = file.name;
     }
 
@@ -35,5 +37,4 @@ public class FileUIInstance : MonoBehaviour
     {
         curFile.onOpened?.Invoke();
     }
-
 }

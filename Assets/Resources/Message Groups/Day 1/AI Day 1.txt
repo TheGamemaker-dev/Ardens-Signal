@@ -1,5 +1,5 @@
 ~FROM:Signal
-~FLAGSREQUIRED:aiDownloaded
+~FLAGSREQUIRED:aiInstalled
 start:
 	Hello, I am Signal, your personal AI assistant.|install
 install:

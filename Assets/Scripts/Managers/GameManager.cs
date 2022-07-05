@@ -5,19 +5,21 @@ using UnityEngine.SceneManagement;
 
 public class GameManager : MonoBehaviour
 {
-    public static Dictionary<string, bool> flags = new Dictionary<string, bool>() {
-        {"logIn", false},
-        {"downloadAi", false},
-        {"aiDownloaded", false},
-        {"aiSetup", false},
-        {"day1Done", false},
-        {"day2Start", false},
-        {"day2Done", false},
-        {"day3Start", false},
-        {"askedOut", false},
-        {"aiRestart", false},
-        {"dream", false},
-        {"8ball", false}
+    public static Dictionary<string, bool> flags = new Dictionary<string, bool>()
+    {
+        { "logIn", false },
+        { "downloadAi", false },
+        { "aiDownloaded", false },
+        { "aiInstalled", false },
+        { "aiSetup", false },
+        { "day1Done", false },
+        { "day2Start", false },
+        { "day2Done", false },
+        { "day3Start", false },
+        { "askedOut", false },
+        { "aiRestart", false },
+        { "dream", false },
+        { "8ball", false }
     };
 
     List<MessageGroup> allMessages = new List<MessageGroup>();
@@ -29,7 +31,6 @@ public class GameManager : MonoBehaviour
     public static UnityAction<string> onFlagSet;
 
     public string playerName;
-
 
     void Awake()
     {
@@ -49,6 +50,7 @@ public class GameManager : MonoBehaviour
         onFlagSet += StartMessageGroups;
         SceneManager.sceneLoaded += OnSceneLoaded;
     }
+
     void OnDisable()
     {
         onFlagSet -= StartMessageGroups;
@@ -98,6 +100,7 @@ public class GameManager : MonoBehaviour
                 break;
         }
     }
+
     public static void SetFlag(string flag)
     {
         if (flags.ContainsKey(flag))
@@ -111,6 +114,7 @@ public class GameManager : MonoBehaviour
             Debug.LogError("No flag found named " + flag);
         }
     }
+
     void StartMessageGroups(string flagSet)
     {
         foreach (MessageGroup group in allMessages)

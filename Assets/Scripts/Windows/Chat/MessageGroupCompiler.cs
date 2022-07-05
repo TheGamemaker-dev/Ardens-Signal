@@ -1,14 +1,16 @@
 using System.Text.RegularExpressions;
 using System.Collections.Generic;
 using UnityEngine;
-using System;
 using System.Reflection;
 
 public static class MessageGroupCompiler
 {
     public static MessageGroup Compile(TextAsset file)
     {
-        string[] fullFile = file.text.Split(new char[] { '\n' }, System.StringSplitOptions.RemoveEmptyEntries);
+        string[] fullFile = file.text.Split(
+            new char[] { '\n' },
+            System.StringSplitOptions.RemoveEmptyEntries
+        );
         Dictionary<int, string> jumps = new Dictionary<int, string>();
         Dictionary<int, Message> messages = new Dictionary<int, Message>();
         Dictionary<int, string> instructions = new Dictionary<int, string>();
@@ -45,7 +47,10 @@ public static class MessageGroupCompiler
                             }
                             else
                             {
-                                choice = new Choice(choiceParams[0].RemoveTabs(), choiceParams[1].RemoveLineBreaks());
+                                choice = new Choice(
+                                    choiceParams[0].RemoveTabs(),
+                                    choiceParams[1].RemoveLineBreaks()
+                                );
                             }
                             choices.Add(choice);
                             lineTypes.Add(i + lineChangeCheck, "choice");
@@ -64,7 +69,9 @@ public static class MessageGroupCompiler
                     }
                     else
                     {
-                        message.message = new Regex(@"=+").Replace(line.RemoveTabs(), "").RemoveLineBreaks();
+                        message.message = new Regex(@"=+")
+                            .Replace(line.RemoveTabs(), "")
+                            .RemoveLineBreaks();
                     }
                     string messageWithDVar = message.message;
                     //modify message for dyanmic variables
@@ -82,7 +89,10 @@ public static class MessageGroupCompiler
                             FieldInfo varInfo = GameManager.singleton.GetType().GetField(variable);
                             string varValue = varInfo.GetValue(GameManager.singleton).ToString();
 
-                            messageWithDVar = messageWithDVar.Replace("{" + variable + "}", varValue);
+                            messageWithDVar = messageWithDVar.Replace(
+                                "{" + variable + "}",
+                                varValue
+                            );
                         }
                     }
                     message.message = messageWithDVar;
@@ -113,7 +123,9 @@ public static class MessageGroupCompiler
                     case "PLAYSOUND":
                         break;
                     default:
-                        throw new UnityException("Instruction not set properly: " + instructionsParams[0]);
+                        throw new UnityException(
+                            "Instruction not set properly: " + instructionsParams[0]
+                        );
                 }
                 instructions.Add(i, line.RemoveLineBreaks().Substring(1));
                 lineTypes.Add(i, "instruction");
@@ -126,7 +138,14 @@ public static class MessageGroupCompiler
             }
         }
 
-        MessageGroup output = new MessageGroup(fullFile, jumps, messages, instructions, lineTypes, from, flagsRequired);
+        MessageGroup output = new MessageGroup(
+            jumps,
+            messages,
+            instructions,
+            lineTypes,
+            from,
+            flagsRequired
+        );
         return output;
     }
 }

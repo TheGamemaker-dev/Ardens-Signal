@@ -2,9 +2,8 @@
 ~FLAGSREQUIRED:askedOut
 start:
 	Hello, a new application has been installed.
-	In order to open it, reply 8ball.
-	_8ball|8ball
-8ball:
+	In order to open it, reply 8ball.=
+		+8ball
 	Ask any question!=
 		+does arden really love me?|response0
 		+why were you glitching out earlier?|response1

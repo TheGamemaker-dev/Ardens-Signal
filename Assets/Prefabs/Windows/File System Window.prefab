@@ -842,12 +842,24 @@ MonoBehaviour:
     flagNeeded: aiDownloaded
     onOpened:
       m_PersistentCalls:
-        m_Calls: []
+        m_Calls:
+        - m_Target: {fileID: 7085784441711384404, guid: 34936a41844642a48a64368c91a6a167, type: 3}
+          m_TargetAssemblyTypeName: GameManager, Assembly-CSharp
+          m_MethodName: SetFlag
+          m_Mode: 5
+          m_Arguments:
+            m_ObjectArgument: {fileID: 0}
+            m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+            m_IntArgument: 0
+            m_FloatArgument: 0
+            m_StringArgument: aiInstalled
+            m_BoolArgument: 0
+          m_CallState: 2
   fileLists:
   - {fileID: 6707965121385618449}
   - {fileID: 7873571913555792086}
   - {fileID: 2744704110263701663}
-  FileUIPrefab: {fileID: 0}
+  fileUIPrefab: {fileID: 8419752466084674789, guid: 83064ec7b1e91364ea5f7b9c457bdfae, type: 3}
 --- !u!1 &7694811001244971785
 GameObject:
   m_ObjectHideFlags: 0

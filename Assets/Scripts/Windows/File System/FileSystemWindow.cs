@@ -9,9 +9,24 @@ public class FileSystemWindow : MonoBehaviour
 {
     public Sprite[] fileImages;
 
-    [SerializeField] File[] files;
-    [SerializeField] Transform[] fileLists;
-    [SerializeField] GameObject FileUIPrefab;
+    [SerializeField]
+    File[] files;
+
+    [SerializeField]
+    Transform[] fileLists;
+
+    [SerializeField]
+    GameObject fileUIPrefab;
+
+    private void OnEnable()
+    {
+        GameManager.onFlagSet += UpdateFileLists;
+    }
+
+    private void OnDisable()
+    {
+        GameManager.onFlagSet -= UpdateFileLists;
+    }
 
     void UpdateFileLists(string flagSet)
     {
@@ -19,7 +34,12 @@ public class FileSystemWindow : MonoBehaviour
         {
             if (!file.visible && file.flagNeeded == flagSet)
             {
-                Instantiate(FileUIPrefab, fileLists[(int)file.folder]);
+                Instantiate(
+                    fileUIPrefab,
+                    fileLists[(int)file.folder]
+                        .GetComponentInChildren<VerticalLayoutGroup>()
+                        .transform
+                );
             }
         }
     }
@@ -28,9 +48,18 @@ public class FileSystemWindow : MonoBehaviour
 [Serializable]
 public class File
 {
+    public enum FileType
+    {
+        Signal,
+        Other
+    };
 
-    public enum FileType { Signal, Other };
-    public enum FileFolder { Downloads, Paint, Chatroom };
+    public enum FileFolder
+    {
+        Downloads,
+        Paint,
+        Chatroom
+    };
 
     public string name;
     public FileType type;

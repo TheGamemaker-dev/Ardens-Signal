@@ -3,12 +3,11 @@
 start:
 	hey..r u ok?
 	you haven't been responding to my texts lately=
-		+ahh i havent gotten a chance to respond|next
-		+hey sorry ive been MIA|next
-next:
+		+ahh i havent gotten a chance to respond
+		+hey sorry ive been MIA
 	_school's been so busy between the play, my classes, and soccer...
 	_it has been just crazy
-	wow look who decides to finally show up=
+	look who decides to finally show up=
 		+im sorry im sorry ok?
 		+sorry i didn't mean to ghost you like that
 	_i promise ill make it up to you ;)

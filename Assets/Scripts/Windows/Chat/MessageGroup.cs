@@ -4,7 +4,6 @@ using UnityEngine;
 
 public class MessageGroup
 {
-    public string[] fullFile { get; }
     public Dictionary<int, string> jumps { get; }
     public Dictionary<int, Message> messages { get; }
     public Dictionary<int, string> instructions { get; }
@@ -13,9 +12,15 @@ public class MessageGroup
     public string[] flagsRequired { get; }
     public bool triggered { get; set; }
 
-    public MessageGroup(string[] fullFile, Dictionary<int, string> jumps, Dictionary<int, Message> messages, Dictionary<int, string> instructions, Dictionary<int, string> lineTypes, string from, string[] flagsRequired)
+    public MessageGroup(
+        Dictionary<int, string> jumps,
+        Dictionary<int, Message> messages,
+        Dictionary<int, string> instructions,
+        Dictionary<int, string> lineTypes,
+        string from,
+        string[] flagsRequired
+    )
     {
-        this.fullFile = fullFile;
         this.jumps = jumps;
         this.messages = messages;
         this.instructions = instructions;
@@ -34,7 +39,6 @@ public class MessageGroup
         {
             int jumpIndex = jumps.FirstOrDefault(x => x.Value == lastMessage.jumpTo).Key;
             nextIndex = jumpIndex;
-
         }
         else if (lastMessage.choices != null)
         {
@@ -64,7 +68,8 @@ public class MessageGroup
 
         if (jump == "")
         {
-            jumpIndex = messages.FirstOrDefault(x => x.Value == message).Key + message.choices.Length;
+            jumpIndex =
+                messages.FirstOrDefault(x => x.Value == message).Key + message.choices.Length;
         }
         else
         {
@@ -97,7 +102,7 @@ public class MessageGroup
                     throw new UnityException("Unknown line type: " + nextLineType);
             }
         }
-    Stop:
+        Stop:
         return new Message();
     }
 }

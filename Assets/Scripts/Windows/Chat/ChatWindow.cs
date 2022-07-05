@@ -9,8 +9,12 @@ public class ChatWindow : MonoBehaviour, IPointerDownHandler
 {
     public bool wasLastClickedOn = false;
 
-    [SerializeField] GameObject messageFromThemPrefab, messageFromYouPrefab;
-    [SerializeField] GameObject optionPrefab;
+    [SerializeField]
+    GameObject messageFromThemPrefab,
+        messageFromYouPrefab;
+
+    [SerializeField]
+    GameObject optionPrefab;
 
     bool wasClickedOn = false;
     Dictionary<string, GameObject> dialogueWindows = new Dictionary<string, GameObject>();
@@ -69,6 +73,7 @@ public class ChatWindow : MonoBehaviour, IPointerDownHandler
         wasLastClickedOn = true;
         wasClickedOn = true;
     }
+
     void Update()
     {
         if (!wasClickedOn && Input.GetMouseButtonDown(0))
@@ -77,7 +82,6 @@ public class ChatWindow : MonoBehaviour, IPointerDownHandler
         }
         wasClickedOn = false;
     }
-
 
     public void StartMessageGroup(MessageGroup group)
     {
@@ -94,16 +98,16 @@ public class ChatWindow : MonoBehaviour, IPointerDownHandler
         chatSelectables[group.from].status.text = "Online";
         chatSelectables[group.from].status.color = Color.green;
         //StartCoroutine SendMessage given group, and only stop if choice needs making or end of file reached
-        StartCoroutine(SendNextMessage(group, dContent));
+        StartCoroutine(StartDialog(group, dContent));
     }
 
-    IEnumerator SendNextMessage(MessageGroup group, GameObject dContent)
+    IEnumerator StartDialog(MessageGroup group, GameObject dContent)
     {
         //if no choices, wait then send next message
         //if choice, stop send messages and wait for input, then wait and send next message
         //if end, stop
         Message currentMessage = null;
-    NextMessage:
+        NextMessage:
         if (currentMessage == null)
         {
             currentMessage = group.messages.First().Value;
@@ -117,7 +121,7 @@ public class ChatWindow : MonoBehaviour, IPointerDownHandler
         {
             goto End;
         }
-    Choice:
+        Choice:
         //messages sent from the player start with an underscore
         GameObject objectToInstantiate;
         if (currentMessage.message[0] != '_')
@@ -132,40 +136,59 @@ public class ChatWindow : MonoBehaviour, IPointerDownHandler
         {
             objectToInstantiate = messageFromYouPrefab;
         }
-        Text messageTextComponent = Instantiate(objectToInstantiate, dContent.transform).GetComponent<Text>();
+        Text messageTextComponent = Instantiate(objectToInstantiate, dContent.transform)
+            .GetComponent<Text>();
         messageTextComponent.text = currentMessage.message.Replace("_", "") + "  ";
 
         if (currentMessage.choices != null)
         {
-            GameObject optionsBox = dContent.transform.parent.parent.GetComponentsInChildren<Transform>().FirstOrDefault(x => x.gameObject.name == "Middle").gameObject;
+            GameObject optionsBox = dContent.transform.parent.parent
+                .GetComponentsInChildren<Transform>()
+                .FirstOrDefault(x => x.gameObject.name == "Middle")
+                .gameObject;
 
             RectTransform rectTransform = (RectTransform)optionsBox.transform;
-            rectTransform.sizeDelta = new Vector2(rectTransform.sizeDelta.x, 15 * currentMessage.choices.Length);
+            rectTransform.sizeDelta = new Vector2(
+                rectTransform.sizeDelta.x,
+                15 * currentMessage.choices.Length
+            );
 
             for (int i = 0; i < currentMessage.choices.Length; i++)
             {
                 Choice choice = currentMessage.choices[i];
-                Text optionTextComponent = Instantiate(optionPrefab, optionsBox.transform).GetComponent<Text>();
+                Text optionTextComponent = Instantiate(optionPrefab, optionsBox.transform)
+                    .GetComponent<Text>();
                 optionTextComponent.text = choice.choiceMessage;
 
                 int j = i;
                 Button optionTextButton = optionTextComponent.gameObject.GetComponent<Button>();
-                optionTextButton.onClick.AddListener(delegate
-                {
-                    currentMessage = group.NextMessage(currentMessage, j);
-                    Text messageFromYouTextComponent = Instantiate(messageFromYouPrefab, dContent.transform).GetComponent<Text>();
-                    messageFromYouTextComponent.text = choice.choiceMessage + "  ";
-                    foreach (Transform child in optionsBox.transform)
+                optionTextButton.onClick.AddListener(
+                    delegate
                     {
-                        Destroy(child.gameObject);
+                        currentMessage = group.NextMessage(currentMessage, j);
+                        Text messageFromYouTextComponent = Instantiate(
+                                messageFromYouPrefab,
+                                dContent.transform
+                            )
+                            .GetComponent<Text>();
+                        messageFromYouTextComponent.text = choice.choiceMessage + "  ";
+                        foreach (Transform child in optionsBox.transform)
+                        {
+                            Destroy(child.gameObject);
+                        }
+                        rectTransform.sizeDelta = new Vector2(rectTransform.sizeDelta.x, 0);
+                        wasLastClickedOn = true;
                     }
-                    rectTransform.sizeDelta = new Vector2(rectTransform.sizeDelta.x, 0);
-                    wasLastClickedOn = true;
-                });
+                );
 
                 Canvas.ForceUpdateCanvases();
             }
-            yield return new WaitWhile(delegate { return optionsBox.GetComponentsInChildren<Transform>().Length > 1; });
+            yield return new WaitWhile(
+                delegate
+                {
+                    return optionsBox.GetComponentsInChildren<Transform>().Length > 1;
+                }
+            );
             yield return new WaitForSeconds(2f);
             Canvas.ForceUpdateCanvases();
             goto Choice;
@@ -175,7 +198,7 @@ public class ChatWindow : MonoBehaviour, IPointerDownHandler
             yield return new WaitForSeconds(2f);
             goto NextMessage;
         }
-    End:
+        End:
         chatSelectables[group.from].status.text = "Offline";
         chatSelectables[group.from].status.color = Color.red;
         yield return null;
