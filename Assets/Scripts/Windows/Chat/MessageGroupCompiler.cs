@@ -144,7 +144,8 @@ public static class MessageGroupCompiler
             instructions,
             lineTypes,
             from,
-            flagsRequired
+            flagsRequired,
+            file.name
         );
         return output;
     }

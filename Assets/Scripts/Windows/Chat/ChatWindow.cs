@@ -8,6 +8,7 @@ using UnityEngine.UI;
 public class ChatWindow : MonoBehaviour, IPointerDownHandler
 {
     public bool wasLastClickedOn = false;
+    public Dictionary<string, GameObject> dialogueWindows = new Dictionary<string, GameObject>();
 
     [SerializeField]
     GameObject messageFromThemPrefab,
@@ -17,9 +18,9 @@ public class ChatWindow : MonoBehaviour, IPointerDownHandler
     GameObject optionPrefab;
 
     bool wasClickedOn = false;
-    Dictionary<string, GameObject> dialogueWindows = new Dictionary<string, GameObject>();
     Dictionary<string, ChatSelectable> chatSelectables = new Dictionary<string, ChatSelectable>();
     AudioManager audioManager;
+    Dictionary<string, List<string>> chatLogs = new Dictionary<string, List<string>>();
 
     void OnEnable()
     {

@@ -5,8 +5,11 @@ using UnityEngine.UI;
 
 public class StartMenu : MonoBehaviour
 {
-    [SerializeField] InputField inputField;
-    [SerializeField] Button submit;
+    [SerializeField]
+    InputField inputField;
+
+    [SerializeField]
+    Button submit;
 
     AudioManager manager;
 
@@ -22,9 +25,24 @@ public class StartMenu : MonoBehaviour
         submit.interactable = value.RemoveWhitespace() != "";
     }
 
-    public void SetName()
+    public void StartGame()
+    {
+        StartCoroutine(DoStartGame());
+    }
+
+    public void StartNewGame()
     {
         GameManager.singleton.playerName = inputField.text;
+        GameManager.singleton.isNewGame = true;
+        StartGame();
+    }
+
+    IEnumerator DoStartGame()
+    {
+        Fade fade = FindObjectOfType<Fade>();
+        fade.FadeOut();
+        yield return new WaitForSeconds(fade.length + 2);
+        GameManager.singleton.ChangeScene("Game");
     }
 
     public void StartGame()

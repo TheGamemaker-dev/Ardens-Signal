@@ -10,7 +10,7 @@ public class FileSystemWindow : MonoBehaviour
     public Sprite[] fileImages;
 
     [SerializeField]
-    File[] files;
+    GameFile[] files;
 
     [SerializeField]
     Transform[] fileLists;
@@ -30,7 +30,7 @@ public class FileSystemWindow : MonoBehaviour
 
     void UpdateFileLists(string flagSet)
     {
-        foreach (File file in files)
+        foreach (GameFile file in files)
         {
             if (!file.visible && file.flagNeeded == flagSet)
             {
@@ -46,7 +46,7 @@ public class FileSystemWindow : MonoBehaviour
 }
 
 [Serializable]
-public class File
+public class GameFile
 {
     public enum FileType
     {

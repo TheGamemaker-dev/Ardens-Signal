@@ -7,7 +7,7 @@ using UnityEngine.UI;
 public class FileUIInstance : MonoBehaviour
 {
     DoubleClickHandler handler;
-    File curFile;
+    GameFile curFile;
 
     private void Awake()
     {
@@ -24,7 +24,7 @@ public class FileUIInstance : MonoBehaviour
         handler.doubleClicked -= DoAction;
     }
 
-    public void SetFileRep(File file)
+    public void SetFileRep(GameFile file)
     {
         curFile = file;
         GetComponent<Image>().sprite = FindObjectOfType<FileSystemWindow>().fileImages[

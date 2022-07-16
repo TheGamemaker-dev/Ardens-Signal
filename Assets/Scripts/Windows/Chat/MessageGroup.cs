@@ -11,6 +11,7 @@ public class MessageGroup
     public string from { get; }
     public string[] flagsRequired { get; }
     public bool triggered { get; set; }
+    public string name;
 
     public MessageGroup(
         Dictionary<int, string> jumps,
@@ -18,7 +19,8 @@ public class MessageGroup
         Dictionary<int, string> instructions,
         Dictionary<int, string> lineTypes,
         string from,
-        string[] flagsRequired
+        string[] flagsRequired,
+        string name
     )
     {
         this.jumps = jumps;
@@ -28,6 +30,7 @@ public class MessageGroup
         this.from = from;
         this.flagsRequired = flagsRequired;
         this.triggered = false;
+        this.name = name;
     }
 
     public Message NextMessage(Message lastMessage)

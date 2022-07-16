@@ -2,6 +2,12 @@ using UnityEngine;
 using System.Collections.Generic;
 using UnityEngine.Events;
 using UnityEngine.SceneManagement;
+using System;
+using Newtonsoft.Json;
+using System.Text;
+using System.IO;
+using UnityEngine.UI;
+using System.Runtime.Serialization.Formatters.Binary;
 
 public class GameManager : MonoBehaviour
 {
@@ -31,6 +37,7 @@ public class GameManager : MonoBehaviour
     public static UnityAction<string> onFlagSet;
 
     public string playerName;
+    public bool isNewGame = false;
 
     void Awake()
     {
@@ -43,6 +50,17 @@ public class GameManager : MonoBehaviour
             singleton = this;
             DontDestroyOnLoad(gameObject);
         }
+        StringBuilder builder = new StringBuilder();
+        StringWriter writer = new StringWriter(builder);
+        JsonTextWriter jsonWriter = new JsonTextWriter(writer);
+        jsonWriter.WriteStartObject();
+        foreach (KeyValuePair<string, bool> flag in flags)
+        {
+            jsonWriter.WritePropertyName(flag.Key);
+            jsonWriter.WriteValue(flag.Value);
+        }
+        jsonWriter.WriteEndObject();
+        Debug.Log(builder.ToString());
     }
 
     void OnEnable()
@@ -66,7 +84,9 @@ public class GameManager : MonoBehaviour
                 TextAsset[] allMGFiles = Resources.LoadAll<TextAsset>("Message Groups");
                 foreach (TextAsset groupFile in allMGFiles)
                 {
-                    allMessages.Add(MessageGroupCompiler.Compile(groupFile));
+                    MessageGroup group = MessageGroupCompiler.Compile(groupFile);
+
+                    allMessages.Add(group);
                 }
                 cutsceneManager = FindObjectOfType<CutsceneManager>();
                 StartCoroutine(cutsceneManager.StartCutscene(1));
@@ -143,8 +163,74 @@ public class GameManager : MonoBehaviour
         }
     }
 
+    public void Save()
+    {
+        if (SceneManager.GetActiveScene().name != "Game")
+        {
+            Debug.LogError("Save should only be called in the Game scene");
+            return;
+        }
+        //things to be saved: flags, chat logs
+        //chatLogs
+        StringBuilder builder = new StringBuilder();
+        StringWriter writer = new StringWriter(builder);
+        JsonTextWriter jsonWriter = new JsonTextWriter(writer);
+        jsonWriter.WriteStartObject();
+        foreach (GameObject log in chatWindow.dialogueWindows.Values)
+        {
+            Text[] messages = log.GetComponentInChildren<ScrollRect>()
+                .GetComponentsInChildren<Text>();
+            jsonWriter.WriteStartArray();
+            jsonWriter.WritePropertyName(log.name);
+            foreach (Text message in messages)
+            {
+                bool fromYou = message.alignment == TextAnchor.MiddleRight;
+                string messageText = (fromYou ? "_" : "") + message.text;
+                jsonWriter.WriteValue(messageText);
+            }
+            jsonWriter.WriteEndArray();
+        }
+        string messageJson = builder.ToString();
+
+        GameData data = new GameData(flags, messageJson);
+
+        //save data
+        BinaryFormatter bf = new BinaryFormatter();
+        FileStream file = File.Create(Application.persistentDataPath + "/SaveData.dat");
+        bf.Serialize(file, data);
+        file.Close();
+        Debug.Log("Game Saved!");
+    }
+
+    public void Load() { }
+
     public static void Quit()
     {
         Application.Quit();
+    }
+}
+
+[Serializable]
+public class GameData
+{
+    string flagsJsonData;
+    string chatJsonData;
+
+    public GameData(Dictionary<string, bool> flags, string chatJsonData)
+    {
+        StringBuilder builder = new StringBuilder();
+        StringWriter writer = new StringWriter(builder);
+        JsonTextWriter jsonWriter = new JsonTextWriter(writer);
+        jsonWriter.WriteStartObject();
+        foreach (KeyValuePair<string, bool> flag in flags)
+        {
+            jsonWriter.WritePropertyName(flag.Key);
+            jsonWriter.WriteValue(flag.Value);
+        }
+        jsonWriter.WriteEndObject();
+
+        flagsJsonData = builder.ToString();
+
+        this.chatJsonData = chatJsonData;
     }
 }
