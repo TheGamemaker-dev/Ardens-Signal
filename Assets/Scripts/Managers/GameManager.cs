@@ -27,17 +27,17 @@ public class GameManager : MonoBehaviour
         { "dream", false },
         { "8ball", false }
     };
+    public static GameManager singleton;
+    public static UnityAction<string> onFlagSet;
+    public static string saveFile;
+
+    public string playerName;
+    public bool isNewGame = false;
 
     List<MessageGroup> allMessages = new List<MessageGroup>();
     ChatWindow chatWindow;
     CutsceneManager cutsceneManager;
     AudioManager audioManager;
-
-    public static GameManager singleton;
-    public static UnityAction<string> onFlagSet;
-
-    public string playerName;
-    public bool isNewGame = false;
 
     void Awake()
     {
@@ -49,18 +49,9 @@ public class GameManager : MonoBehaviour
         {
             singleton = this;
             DontDestroyOnLoad(gameObject);
+            saveFile = Application.persistentDataPath + "/SaveData.dat";
+            CompileMessages();
         }
-        StringBuilder builder = new StringBuilder();
-        StringWriter writer = new StringWriter(builder);
-        JsonTextWriter jsonWriter = new JsonTextWriter(writer);
-        jsonWriter.WriteStartObject();
-        foreach (KeyValuePair<string, bool> flag in flags)
-        {
-            jsonWriter.WritePropertyName(flag.Key);
-            jsonWriter.WriteValue(flag.Value);
-        }
-        jsonWriter.WriteEndObject();
-        Debug.Log(builder.ToString());
     }
 
     void OnEnable()
@@ -81,16 +72,11 @@ public class GameManager : MonoBehaviour
         {
             case "Game":
                 chatWindow = FindObjectOfType<ChatWindow>();
-                TextAsset[] allMGFiles = Resources.LoadAll<TextAsset>("Message Groups");
-                foreach (TextAsset groupFile in allMGFiles)
-                {
-                    MessageGroup group = MessageGroupCompiler.Compile(groupFile);
-
-                    allMessages.Add(group);
-                }
-                cutsceneManager = FindObjectOfType<CutsceneManager>();
-                StartCoroutine(cutsceneManager.StartCutscene(1));
                 audioManager = FindObjectOfType<AudioManager>();
+                cutsceneManager = FindObjectOfType<CutsceneManager>();
+
+                StartCoroutine(cutsceneManager.StartCutscene(1));
+                GameObject.Find("Save Button").GetComponent<Button>().onClick.AddListener(Save);
                 break;
             default:
                 break;
@@ -180,8 +166,8 @@ public class GameManager : MonoBehaviour
         {
             Text[] messages = log.GetComponentInChildren<ScrollRect>()
                 .GetComponentsInChildren<Text>();
-            jsonWriter.WriteStartArray();
             jsonWriter.WritePropertyName(log.name);
+            jsonWriter.WriteStartArray();
             foreach (Text message in messages)
             {
                 bool fromYou = message.alignment == TextAnchor.MiddleRight;
@@ -196,17 +182,57 @@ public class GameManager : MonoBehaviour
 
         //save data
         BinaryFormatter bf = new BinaryFormatter();
-        FileStream file = File.Create(Application.persistentDataPath + "/SaveData.dat");
+        FileStream file = File.Create(saveFile);
         bf.Serialize(file, data);
         file.Close();
         Debug.Log("Game Saved!");
     }
 
-    public void Load() { }
+    public void Load()
+    {
+        bool dataExists = File.Exists(saveFile);
+
+        BinaryFormatter bf = new BinaryFormatter();
+        FileStream file = new FileStream(saveFile, FileMode.Open);
+        GameData data = (GameData)bf.Deserialize(file);
+
+        //convert flag json data to dictionary
+        flags = data.GetFlags();
+
+        //set message groups as triggered
+        foreach (MessageGroup group in allMessages)
+        {
+            bool triggered = true;
+            foreach (string flag in group.flagsRequired)
+            {
+                bool needsTrue = flag[0] != '!';
+                string curFlag = needsTrue ? flag : flag.Remove(0, 1);
+
+                if (flags[curFlag] != needsTrue)
+                {
+                    triggered = false;
+                }
+            }
+
+            group.triggered = triggered;
+        }
+    }
 
     public static void Quit()
     {
         Application.Quit();
+    }
+
+    void CompileMessages()
+    {
+        TextAsset[] allMGFiles = Resources.LoadAll<TextAsset>("Message Groups");
+
+        foreach (TextAsset groupFile in allMGFiles)
+        {
+            MessageGroup group = MessageGroupCompiler.Compile(groupFile);
+
+            allMessages.Add(group);
+        }
     }
 }
 
@@ -232,5 +258,51 @@ public class GameData
         flagsJsonData = builder.ToString();
 
         this.chatJsonData = chatJsonData;
+    }
+
+    public Dictionary<string, bool> GetFlags()
+    {
+        Dictionary<string, bool> output = new Dictionary<string, bool>();
+
+        StringReader stringReader = new StringReader(flagsJsonData);
+        JsonReader jsonReader = new JsonTextReader(stringReader);
+
+        string lastProp = "";
+
+        while (jsonReader.Read())
+        {
+            JsonToken token = jsonReader.TokenType;
+#nullable enable
+            object? value = jsonReader.Value;
+#nullable disable
+            if (value != null)
+            {
+                Debug.Log("Token: " + token + "\t Value: " + value);
+                if (token == JsonToken.PropertyName)
+                {
+                    lastProp = value.ToString();
+                }
+                else if (token == JsonToken.Boolean)
+                {
+                    if (!output.ContainsKey(lastProp) && lastProp != "")
+                    {
+                        output.Add(lastProp, (bool)value);
+                    }
+                    else
+                    {
+                        Debug.LogWarning("Value already exists: " + lastProp);
+                    }
+                }
+                else
+                {
+                    Debug.Log(token);
+                }
+            }
+            else
+            {
+                Debug.Log("Token: " + jsonReader.TokenType);
+            }
+        }
+        return output;
     }
 }

@@ -34,8 +34,9 @@ day:
 		+you know I could always tutor you im great at math!
 		+want me to help you out?
 	i wish but you live like a million miles away=
-		+yeah i wish we lived closer
-		+we'll figure something out!
+		+yeah i wish we lived closer|AI
+		+we'll figure something out!|AI
+AI:
 	anyways i've been working on something=
 		+ooh what is it?
 		+well don't keep me waiting!

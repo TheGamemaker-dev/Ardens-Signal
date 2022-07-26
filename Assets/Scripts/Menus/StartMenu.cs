@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+using System.IO;
 
 public class StartMenu : MonoBehaviour
 {
@@ -9,7 +10,8 @@ public class StartMenu : MonoBehaviour
     InputField inputField;
 
     [SerializeField]
-    Button submit;
+    Button submit,
+        continueButton;
 
     AudioManager manager;
 
@@ -18,6 +20,7 @@ public class StartMenu : MonoBehaviour
         UpdateButton("");
         manager = FindObjectOfType<AudioManager>();
         manager.PlaySound("Dream", true);
+        continueButton.interactable = File.Exists(GameManager.saveFile);
     }
 
     public void UpdateButton(string value)
@@ -35,19 +38,6 @@ public class StartMenu : MonoBehaviour
         GameManager.singleton.playerName = inputField.text;
         GameManager.singleton.isNewGame = true;
         StartGame();
-    }
-
-    IEnumerator DoStartGame()
-    {
-        Fade fade = FindObjectOfType<Fade>();
-        fade.FadeOut();
-        yield return new WaitForSeconds(fade.length + 2);
-        GameManager.singleton.ChangeScene("Game");
-    }
-
-    public void StartGame()
-    {
-        StartCoroutine(DoStartGame());
     }
 
     IEnumerator DoStartGame()
