@@ -178,7 +178,7 @@ public class GameManager : MonoBehaviour
         }
         string messageJson = builder.ToString();
 
-        GameData data = new GameData(flags, messageJson);
+        GameData data = new GameData(flags, messageJson, playerName);
 
         //save data
         BinaryFormatter bf = new BinaryFormatter();
@@ -216,6 +216,8 @@ public class GameManager : MonoBehaviour
 
             group.triggered = triggered;
         }
+
+        playerName = data.playerName;
     }
 
     public static void Quit()
@@ -239,10 +241,12 @@ public class GameManager : MonoBehaviour
 [Serializable]
 public class GameData
 {
+    public string playerName { get; set; }
+
     string flagsJsonData;
     string chatJsonData;
 
-    public GameData(Dictionary<string, bool> flags, string chatJsonData)
+    public GameData(Dictionary<string, bool> flags, string chatJsonData, string playerName)
     {
         StringBuilder builder = new StringBuilder();
         StringWriter writer = new StringWriter(builder);
@@ -258,6 +262,7 @@ public class GameData
         flagsJsonData = builder.ToString();
 
         this.chatJsonData = chatJsonData;
+        this.playerName = playerName;
     }
 
     public Dictionary<string, bool> GetFlags()

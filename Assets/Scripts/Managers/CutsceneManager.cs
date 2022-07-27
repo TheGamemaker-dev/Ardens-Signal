@@ -2,28 +2,37 @@ using UnityEngine;
 using UnityEngine.Events;
 using UnityEngine.Video;
 using System.Collections;
+using UnityEngine.UI;
 
 public class CutsceneManager : MonoBehaviour
 {
     public UnityAction cutsceneStarted;
 
-    [SerializeField] VideoClip[] cutscenes; //in chronological order
+    [SerializeField]
+    VideoClip[] cutscenes; //in chronological order
 
     VideoPlayer player;
+    Image coverPanel;
+
     void Awake()
     {
         player = GetComponent<VideoPlayer>();
+        coverPanel = GetComponent<Image>();
     }
+
     void OnEnable()
     {
         GameManager.onFlagSet += OnEndDay;
     }
+
     void OnDisable()
     {
         GameManager.onFlagSet -= OnEndDay;
     }
+
     public IEnumerator StartCutscene(int day)
     {
+        coverPanel.enabled = false;
         Fade fade = FindObjectOfType<Fade>();
         if (day != 1)
         {
@@ -51,7 +60,9 @@ public class CutsceneManager : MonoBehaviour
             fade.FadeIn();
         }
         transform.SetAsFirstSibling();
+        coverPanel.enabled = true;
     }
+
     void OnEndDay(string dayDone)
     {
         bool hasProperSyntax = dayDone.Remove(3) == "day" && dayDone.Substring(4) == "Done";
