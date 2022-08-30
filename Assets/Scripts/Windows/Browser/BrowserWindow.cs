@@ -5,9 +5,14 @@ using UnityEngine.UI;
 
 public class BrowserWindow : MonoBehaviour
 {
-    [SerializeField] RectTransform content;
-    [SerializeField] Image contentViewer;
-    [SerializeField] Sprite defaultPage;
+    [SerializeField]
+    RectTransform content;
+
+    [SerializeField]
+    Image contentViewer;
+
+    [SerializeField]
+    Sprite defaultPage;
 
     // Start is called before the first frame update
     void Start()
@@ -17,10 +22,7 @@ public class BrowserWindow : MonoBehaviour
     }
 
     // Update is called once per frame
-    void Update()
-    {
-
-    }
+    void Update() { }
 
     void ChangePage(Sprite page)
     {

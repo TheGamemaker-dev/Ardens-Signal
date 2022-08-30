@@ -9,6 +9,7 @@ public class ChatWindow : MonoBehaviour, IPointerDownHandler
 {
     public bool wasLastClickedOn = false;
     public Dictionary<string, GameObject> dialogueWindows = new Dictionary<string, GameObject>();
+    public List<MessageGroup> lastGroupsTriggered = new List<MessageGroup>();
 
     [SerializeField]
     GameObject messageFromThemPrefab,
@@ -20,14 +21,13 @@ public class ChatWindow : MonoBehaviour, IPointerDownHandler
     bool wasClickedOn = false;
     Dictionary<string, ChatSelectable> chatSelectables = new Dictionary<string, ChatSelectable>();
     AudioManager audioManager;
-    Dictionary<string, List<string>> chatLogs = new Dictionary<string, List<string>>();
 
     void OnEnable()
     {
         GameManager.onFlagSet += UpdateSelectables;
     }
 
-    void Start()
+    void Awake()
     {
         //Get all dialogue windows
         foreach (Transform child in transform)
@@ -84,11 +84,24 @@ public class ChatWindow : MonoBehaviour, IPointerDownHandler
         wasClickedOn = false;
     }
 
-    public void StartMessageGroup(MessageGroup group)
+    public void StartMessageGroup(MessageGroup group, int startMessageIndex = 0)
     {
         GameObject dWindow = dialogueWindows[group.from];
         GameObject dContent = null;
         Transform[] children = dWindow.GetComponentsInChildren<Transform>();
+
+        if (lastGroupsTriggered.Where(x => x.from == group.from).Count() == 0)
+        {
+            lastGroupsTriggered.Add(group);
+        }
+        else
+        {
+            int indexToReplace = lastGroupsTriggered.IndexOf(
+                lastGroupsTriggered.Where(x => x.from == group.from).First()
+            );
+            lastGroupsTriggered[indexToReplace] = group;
+        }
+
         foreach (Transform child in children)
         {
             if (child.gameObject.name == "Dialogue Content")
@@ -99,15 +112,26 @@ public class ChatWindow : MonoBehaviour, IPointerDownHandler
         chatSelectables[group.from].status.text = "Online";
         chatSelectables[group.from].status.color = Color.green;
         //StartCoroutine SendMessage given group, and only stop if choice needs making or end of file reached
-        StartCoroutine(StartDialog(group, dContent));
+        StartCoroutine(StartDialog(group, dContent, startMessageIndex));
     }
 
-    IEnumerator StartDialog(MessageGroup group, GameObject dContent)
+    IEnumerator StartDialog(MessageGroup group, GameObject dContent, int startMessageIndex)
     {
         //if no choices, wait then send next message
         //if choice, stop send messages and wait for input, then wait and send next message
         //if end, stop
         Message currentMessage = null;
+
+        if (startMessageIndex == group.messages.Last().Key)
+        {
+            yield break;
+        }
+
+        if (startMessageIndex != 0)
+        {
+            currentMessage = group.messages[startMessageIndex];
+        }
+
         NextMessage:
         if (currentMessage == null)
         {
@@ -139,7 +163,7 @@ public class ChatWindow : MonoBehaviour, IPointerDownHandler
         }
         Text messageTextComponent = Instantiate(objectToInstantiate, dContent.transform)
             .GetComponent<Text>();
-        messageTextComponent.text = currentMessage.message.Replace("_", "") + "  ";
+        messageTextComponent.text = currentMessage.message.Replace("_", "  ");
 
         if (currentMessage.choices != null)
         {
@@ -203,5 +227,17 @@ public class ChatWindow : MonoBehaviour, IPointerDownHandler
         chatSelectables[group.from].status.text = "Offline";
         chatSelectables[group.from].status.color = Color.red;
         yield return null;
+    }
+
+    public void SendMessageImmediate(GameObject dialogWindow, bool fromYou, string message)
+    {
+        GameObject objectToInstantiate = fromYou ? messageFromYouPrefab : messageFromThemPrefab;
+
+        Text messageTextComponent = Instantiate(
+                objectToInstantiate,
+                dialogWindow.GetComponentInChildren<VerticalLayoutGroup>().gameObject.transform
+            )
+            .GetComponent<Text>();
+        messageTextComponent.text = message.Replace("_", "  ");
     }
 }

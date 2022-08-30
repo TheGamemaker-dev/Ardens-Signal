@@ -8,6 +8,7 @@ using System.Text;
 using System.IO;
 using UnityEngine.UI;
 using System.Runtime.Serialization.Formatters.Binary;
+using System.Linq;
 
 public class GameManager : MonoBehaviour
 {
@@ -27,12 +28,15 @@ public class GameManager : MonoBehaviour
         { "dream", false },
         { "8ball", false }
     };
+
     public static GameManager singleton;
     public static UnityAction<string> onFlagSet;
     public static string saveFile;
 
     public string playerName;
     public bool isNewGame = false;
+
+    static GameData savedData;
 
     List<MessageGroup> allMessages = new List<MessageGroup>();
     ChatWindow chatWindow;
@@ -71,12 +75,59 @@ public class GameManager : MonoBehaviour
         switch (scene.name)
         {
             case "Game":
+                //general setup
                 chatWindow = FindObjectOfType<ChatWindow>();
                 audioManager = FindObjectOfType<AudioManager>();
                 cutsceneManager = FindObjectOfType<CutsceneManager>();
 
-                StartCoroutine(cutsceneManager.StartCutscene(1));
-                GameObject.Find("Save Button").GetComponent<Button>().onClick.AddListener(Save);
+                if (isNewGame)
+                { //new game only
+                    StartCoroutine(cutsceneManager.StartCutscene(1));
+                    FindObjectOfType<LoginManager>().gameObject.transform.SetAsLastSibling();
+                }
+                else
+                { //continue only
+                    JsonReader reader = new JsonTextReader(new StringReader(savedData.chatJsonData));
+                    GameObject curDWindow = null;
+                    while (reader.Read())
+                    {
+#nullable enable
+                        object? curValue = reader.Value;
+#nullable disable
+                        JsonToken curToken = reader.TokenType;
+                        string lastValue = "";
+                        if (curValue != null)
+                        {
+                            switch (curToken)
+                            {
+                                case JsonToken.PropertyName:
+                                    if (lastValue.ToString() != "")
+                                    {
+                                        MessageGroup groupToStart =
+                                            chatWindow.lastGroupsTriggered.First(
+                                                x => x.from == curValue.ToString()
+                                            );
+                                        int indexToStart = groupToStart.messages
+                                            .First(x => x.Value.message == lastValue)
+                                            .Key;
+                                    }
+                                    curDWindow = chatWindow.dialogueWindows[curValue.ToString()];
+                                    break;
+                                case JsonToken.String:
+                                    chatWindow.SendMessageImmediate(
+                                        curDWindow,
+                                        curValue.ToString()[0] == '_',
+                                        curValue.ToString()
+                                    );
+                                    lastValue = curValue.ToString();
+                                    break;
+                                default:
+                                    Debug.LogWarning("Unknown Token: " + curToken);
+                                    break;
+                            }
+                        }
+                    }
+                }
                 break;
             default:
                 break;
@@ -156,7 +207,7 @@ public class GameManager : MonoBehaviour
             Debug.LogError("Save should only be called in the Game scene");
             return;
         }
-        //things to be saved: flags, chat logs
+        //things to be saved: flags, chat logs, player name, last message index
         //chatLogs
         StringBuilder builder = new StringBuilder();
         StringWriter writer = new StringWriter(builder);
@@ -194,10 +245,10 @@ public class GameManager : MonoBehaviour
 
         BinaryFormatter bf = new BinaryFormatter();
         FileStream file = new FileStream(saveFile, FileMode.Open);
-        GameData data = (GameData)bf.Deserialize(file);
+        savedData = (GameData)bf.Deserialize(file);
 
         //convert flag json data to dictionary
-        flags = data.GetFlags();
+        flags = savedData.GetFlags();
 
         //set message groups as triggered
         foreach (MessageGroup group in allMessages)
@@ -216,8 +267,7 @@ public class GameManager : MonoBehaviour
 
             group.triggered = triggered;
         }
-
-        playerName = data.playerName;
+        playerName = savedData.playerName;
     }
 
     public static void Quit()
@@ -242,9 +292,9 @@ public class GameManager : MonoBehaviour
 public class GameData
 {
     public string playerName { get; set; }
+    public string chatJsonData { get; set; }
 
     string flagsJsonData;
-    string chatJsonData;
 
     public GameData(Dictionary<string, bool> flags, string chatJsonData, string playerName)
     {
@@ -282,7 +332,6 @@ public class GameData
 #nullable disable
             if (value != null)
             {
-                Debug.Log("Token: " + token + "\t Value: " + value);
                 if (token == JsonToken.PropertyName)
                 {
                     lastProp = value.ToString();
@@ -298,14 +347,6 @@ public class GameData
                         Debug.LogWarning("Value already exists: " + lastProp);
                     }
                 }
-                else
-                {
-                    Debug.Log(token);
-                }
-            }
-            else
-            {
-                Debug.Log("Token: " + jsonReader.TokenType);
             }
         }
         return output;

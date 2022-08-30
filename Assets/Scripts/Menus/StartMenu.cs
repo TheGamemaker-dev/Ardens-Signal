@@ -37,6 +37,7 @@ public class StartMenu : MonoBehaviour
     {
         GameManager.singleton.playerName = inputField.text;
         GameManager.singleton.isNewGame = true;
+        File.Delete(GameManager.saveFile);
         StartGame();
     }
 
