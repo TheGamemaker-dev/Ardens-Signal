@@ -6,33 +6,32 @@ using UnityEngine.UI;
 public class BrowserWindow : MonoBehaviour
 {
     [SerializeField]
+    BrowserPage defaultPage;
+
+    ScrollRect scrollRect;
     RectTransform content;
-
-    [SerializeField]
-    Image contentViewer;
-
-    [SerializeField]
-    Sprite defaultPage;
 
     // Start is called before the first frame update
     void Start()
     {
+        scrollRect = GetComponentInChildren<ScrollRect>();
         ChangePage(defaultPage);
-        content.offsetMin = new Vector2(0, -content.rect.height);
     }
 
-    // Update is called once per frame
-    void Update() { }
-
-    void ChangePage(Sprite page)
+    void ChangePage(BrowserPage page)
     {
-        float pageWidth = page.rect.width;
-        float pageHeight = page.rect.height;
+        GameObject pageInstance = Instantiate(page.gameObject, scrollRect.gameObject.transform);
+        Sprite pageImage = pageInstance.GetComponent<Image>().sprite;
+        content = pageInstance.GetComponent<RectTransform>();
+        scrollRect.content = content;
+
+        float pageWidth = pageImage.rect.width;
+        float pageHeight = pageImage.rect.height;
         float contentWidth = content.rect.width;
+        float contentHeight = content.rect.height;
 
-        float newHeight = contentWidth * (pageHeight / pageWidth);
+        float newHeightDelta = (contentWidth * (pageHeight / pageWidth)) - contentHeight;
 
-        content.offsetMin = new Vector2(0, -newHeight);
-        contentViewer.sprite = page;
+        content.sizeDelta = new Vector2(0, newHeightDelta);
     }
 }
