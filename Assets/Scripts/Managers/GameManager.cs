@@ -82,8 +82,8 @@ public class GameManager : MonoBehaviour
 
                 if (isNewGame)
                 { //new game only
-                    StartCoroutine(cutsceneManager.StartCutscene(1));
                     FindObjectOfType<LoginManager>().gameObject.transform.SetAsLastSibling();
+                    StartCoroutine(cutsceneManager.StartCutscene(1));
                 }
                 else
                 { //continue only

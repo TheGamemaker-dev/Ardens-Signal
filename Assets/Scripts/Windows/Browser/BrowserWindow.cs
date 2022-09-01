@@ -10,6 +10,8 @@ public class BrowserWindow : MonoBehaviour
 
     ScrollRect scrollRect;
     RectTransform content;
+    List<BrowserPage> history = new List<BrowserPage>();
+    List<BrowserPage> future = new List<BrowserPage>();
 
     // Start is called before the first frame update
     void Start()
@@ -18,10 +20,14 @@ public class BrowserWindow : MonoBehaviour
         ChangePage(defaultPage);
     }
 
-    void ChangePage(BrowserPage page)
+    public void ChangePage(BrowserPage page)
     {
         GameObject pageInstance = Instantiate(page.gameObject, scrollRect.gameObject.transform);
         Sprite pageImage = pageInstance.GetComponent<Image>().sprite;
+        if (content != null)
+        {
+            Destroy(content.gameObject);
+        }
         content = pageInstance.GetComponent<RectTransform>();
         scrollRect.content = content;
 
@@ -33,5 +39,19 @@ public class BrowserWindow : MonoBehaviour
         float newHeightDelta = (contentWidth * (pageHeight / pageWidth)) - contentHeight;
 
         content.sizeDelta = new Vector2(0, newHeightDelta);
+
+        history.Add(page);
+    }
+
+    public void GoBack()
+    {
+        if (history.Count == 0)
+        {
+            return;
+        }
+
+        ChangePage(history[history.Count - 1]);
+
+        history.RemoveRange(history.Count - 2, 2);
     }
 }

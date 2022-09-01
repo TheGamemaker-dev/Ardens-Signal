@@ -32,6 +32,7 @@ public class CutsceneManager : MonoBehaviour
 
     public IEnumerator StartCutscene(int day)
     {
+        Debug.Log(day);
         coverPanel.enabled = false;
         Fade fade = FindObjectOfType<Fade>();
         if (day != 1)
@@ -47,6 +48,7 @@ public class CutsceneManager : MonoBehaviour
         }
         player.clip = cutscenes[day - 1];
         transform.SetAsLastSibling();
+        player.Play();
         if (day == 1)
         {
             yield return new WaitForSeconds(13);

@@ -4,15 +4,16 @@ using UnityEngine;
 
 public class BrowserPage : MonoBehaviour
 {
+    BrowserWindow window;
+
     // Start is called before the first frame update
     void Start()
     {
-        
+        window = FindObjectOfType<BrowserWindow>();
     }
 
-    // Update is called once per frame
-    void Update()
+    public void ChangePage(BrowserPage page)
     {
-        
+        window.ChangePage(page);
     }
 }

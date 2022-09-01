@@ -304,9 +304,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 13682bd3d8168d242b2c2f233f69cc25, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  content: {fileID: 0}
-  contentViewer: {fileID: 0}
-  defaultPage: {fileID: 21300000, guid: 2e5a089671a2ec541bc00b06cb790600, type: 3}
+  defaultPage: {fileID: 7705800177715940901, guid: f2df31fe3145d17408309da958aeb413, type: 3}
 --- !u!1 &2850577693824333362
 GameObject:
   m_ObjectHideFlags: 0

@@ -886,6 +886,10 @@ PrefabInstance:
       propertyPath: m_Content
       value: 
       objectReference: {fileID: 0}
+    - target: {fileID: 2850577693871027060, guid: ef9d01a5809e0a540b7adb0f7d44e798, type: 3}
+      propertyPath: m_ScrollSensitivity
+      value: 5
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: ef9d01a5809e0a540b7adb0f7d44e798, type: 3}
 --- !u!1001 &3331021149791679533
