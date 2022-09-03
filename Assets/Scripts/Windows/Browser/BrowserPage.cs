@@ -4,6 +4,8 @@ using UnityEngine;
 
 public class BrowserPage : MonoBehaviour
 {
+    public string url;
+
     BrowserWindow window;
 
     // Start is called before the first frame update

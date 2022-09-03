@@ -109,12 +109,16 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 7705800177715940899, guid: f2df31fe3145d17408309da958aeb413, type: 3}
       propertyPath: m_Name
-      value: Browser Page Base Variant
+      value: LinkTest
       objectReference: {fileID: 0}
     - target: {fileID: 7705800177715940900, guid: f2df31fe3145d17408309da958aeb413, type: 3}
       propertyPath: m_Sprite
       value: 
       objectReference: {fileID: -1259408508766424310, guid: 0d90349ca601cfc49be9487daff7a5ec, type: 3}
+    - target: {fileID: 7705800177715940901, guid: f2df31fe3145d17408309da958aeb413, type: 3}
+      propertyPath: url
+      value: link.com
+      objectReference: {fileID: 0}
     - target: {fileID: 7847171522958232619, guid: f2df31fe3145d17408309da958aeb413, type: 3}
       propertyPath: linkTo
       value: 

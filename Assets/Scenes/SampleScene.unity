@@ -874,22 +874,6 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
-    - target: {fileID: 2850577693746922349, guid: ef9d01a5809e0a540b7adb0f7d44e798, type: 3}
-      propertyPath: content
-      value: 
-      objectReference: {fileID: 0}
-    - target: {fileID: 2850577693746922349, guid: ef9d01a5809e0a540b7adb0f7d44e798, type: 3}
-      propertyPath: defaultPage
-      value: 
-      objectReference: {fileID: 7705800177715940901, guid: f2df31fe3145d17408309da958aeb413, type: 3}
-    - target: {fileID: 2850577693871027060, guid: ef9d01a5809e0a540b7adb0f7d44e798, type: 3}
-      propertyPath: m_Content
-      value: 
-      objectReference: {fileID: 0}
-    - target: {fileID: 2850577693871027060, guid: ef9d01a5809e0a540b7adb0f7d44e798, type: 3}
-      propertyPath: m_ScrollSensitivity
-      value: 5
-      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: ef9d01a5809e0a540b7adb0f7d44e798, type: 3}
 --- !u!1001 &3331021149791679533
