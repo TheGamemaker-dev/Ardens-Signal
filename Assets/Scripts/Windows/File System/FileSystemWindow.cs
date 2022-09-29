@@ -34,12 +34,15 @@ public class FileSystemWindow : MonoBehaviour
         {
             if (!file.visible && file.flagNeeded == flagSet)
             {
-                Instantiate(
-                    fileUIPrefab,
-                    fileLists[(int)file.folder]
-                        .GetComponentInChildren<VerticalLayoutGroup>()
-                        .transform
-                );
+                FileUIInstance instance = Instantiate(
+                        fileUIPrefab,
+                        fileLists[(int)file.folder]
+                            .GetComponentInChildren<VerticalLayoutGroup>()
+                            .transform
+                    )
+                    .GetComponent<FileUIInstance>();
+
+                instance.SetFileRep(file);
             }
         }
     }
