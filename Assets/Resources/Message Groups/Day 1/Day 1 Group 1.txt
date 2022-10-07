@@ -8,10 +8,9 @@ start:
 next:
 	how was your day?=
 		+it was pretty good|day
-		+it was really weird|dream
+		+it was really weird, I had this crazy dream|dream
 dream:
 ~SETFLAG:dream
-	_i had this crazy dream
 	_we were on a date, and we were holding hands
 	that's silly haha you don't even know what i look like!=
 		+i don't have to I already know ur beautiful
