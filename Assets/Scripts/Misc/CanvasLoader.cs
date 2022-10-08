@@ -23,6 +23,8 @@ public class CanvasLoader : MonoBehaviour
         yield return new WaitForSeconds(.25f);
         foreach (Transform child in transform)
         {
+            if (child.gameObject.name == "Pause Panel")
+                continue;
             child.gameObject.SetActive(true);
         }
     }

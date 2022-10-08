@@ -775,7 +775,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 992220195837281635, guid: 1626c99ae353c9c4483771a4d6484396, type: 3}
       propertyPath: m_IsActive
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 1626c99ae353c9c4483771a4d6484396, type: 3}
@@ -789,6 +789,10 @@ PrefabInstance:
     - target: {fileID: 2850577693746922336, guid: ef9d01a5809e0a540b7adb0f7d44e798, type: 3}
       propertyPath: m_Name
       value: Browser Window
+      objectReference: {fileID: 0}
+    - target: {fileID: 2850577693746922336, guid: ef9d01a5809e0a540b7adb0f7d44e798, type: 3}
+      propertyPath: m_IsActive
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 2850577693746922339, guid: ef9d01a5809e0a540b7adb0f7d44e798, type: 3}
       propertyPath: m_Pivot.x

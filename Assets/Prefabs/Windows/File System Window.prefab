@@ -172,7 +172,7 @@ GameObject:
   - component: {fileID: 7047626325115006001}
   m_Layer: 5
   m_Name: Downloads
-  m_TagString: File Sys Window
+  m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -1151,7 +1151,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 4470924064653003316, guid: df3fcab06518c1e4d9a2dc2b63346be1, type: 3}
       propertyPath: m_AnchoredPosition.x
-      value: 35.608994
+      value: 35.60901
       objectReference: {fileID: 0}
     - target: {fileID: 5065493569816497771, guid: df3fcab06518c1e4d9a2dc2b63346be1, type: 3}
       propertyPath: m_SizeDelta.x
