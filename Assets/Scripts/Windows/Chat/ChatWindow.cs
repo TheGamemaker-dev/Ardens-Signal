@@ -60,7 +60,7 @@ public class ChatWindow : MonoBehaviour, IPointerDownHandler
         //Certain selectables require flags to appear in the chat
         switch (flag)
         {
-            case "aiDownloaded":
+            case "aiInstalled":
                 chatSelectables["Signal"].gameObject.SetActive(GameManager.flags[flag]);
                 break;
             default:

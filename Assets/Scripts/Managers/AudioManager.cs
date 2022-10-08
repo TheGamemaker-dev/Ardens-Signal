@@ -7,8 +7,11 @@ using UnityEngine.SceneManagement;
 
 public class AudioManager : MonoBehaviour
 {
-    [SerializeField] GameObject soundPrefab;
-    [SerializeField] Dictionary<string, AudioClip> sfxs = new Dictionary<string, AudioClip>();
+    [SerializeField]
+    GameObject soundPrefab;
+
+    [SerializeField]
+    Dictionary<string, AudioClip> sfxs = new Dictionary<string, AudioClip>();
 
     List<AudioSource> playingSources = new List<AudioSource>();
 
@@ -35,8 +38,6 @@ public class AudioManager : MonoBehaviour
         }
     }
 
-
-
     public void PlaySound(string name, bool loop)
     {
         bool isAmbient = false;
@@ -62,6 +63,7 @@ public class AudioManager : MonoBehaviour
             StartCoroutine(DestroySound(source));
         }
     }
+
     IEnumerator DestroySound(AudioSource source)
     {
         float waitTime = source.clip.length;
@@ -133,13 +135,19 @@ public class AudioManager : MonoBehaviour
     void OnEnable()
     {
         GameManager.onFlagSet += OnDayEnd;
-        SceneManager.activeSceneChanged += delegate { StopAllAmbientSounds(); };
+        SceneManager.activeSceneChanged += delegate
+        {
+            StopAllAmbientSounds();
+        };
     }
 
     void OnDisable()
     {
         GameManager.onFlagSet -= OnDayEnd;
-        SceneManager.activeSceneChanged -= delegate { StopAllAmbientSounds(); };
+        SceneManager.activeSceneChanged -= delegate
+        {
+            StopAllAmbientSounds();
+        };
     }
 
     void StopAllAmbientSounds()
