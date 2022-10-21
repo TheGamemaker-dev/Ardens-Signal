@@ -1,14 +1,18 @@
-using UnityEngine;
+using Newtonsoft.Json;
+
+using System;
+using System.IO;
+using System.Linq;
+using System.Text;
 using System.Collections.Generic;
+using System.Runtime.Serialization.Formatters.Binary;
+
+using UnityEditor;
+
+using UnityEngine;
+using UnityEngine.UI;
 using UnityEngine.Events;
 using UnityEngine.SceneManagement;
-using System;
-using Newtonsoft.Json;
-using System.Text;
-using System.IO;
-using UnityEngine.UI;
-using System.Runtime.Serialization.Formatters.Binary;
-using System.Linq;
 
 public class GameManager : MonoBehaviour
 {
@@ -87,29 +91,46 @@ public class GameManager : MonoBehaviour
                 }
                 else
                 { //continue only
-                    JsonReader reader = new JsonTextReader(new StringReader(savedData.chatJsonData));
+                    foreach (MessageGroup messageGroup in allMessages)
+                    {
+                        if (messageGroup.triggered)
+                        {
+                            chatWindow.lastGroupsTriggered.Add(messageGroup);
+                        }
+                    }
+                    JsonReader reader = new JsonTextReader(
+                        new StringReader(savedData.chatJsonData)
+                    );
                     GameObject curDWindow = null;
+                    string lastValue = "";
+                    string curProp = "",
+                        lastProp = "";
                     while (reader.Read())
                     {
 #nullable enable
                         object? curValue = reader.Value;
 #nullable disable
                         JsonToken curToken = reader.TokenType;
-                        string lastValue = "";
                         if (curValue != null)
                         {
                             switch (curToken)
                             {
                                 case JsonToken.PropertyName:
-                                    if (lastValue.ToString() != "")
+                                    if (curProp != curValue.ToString())
+                                    {
+                                        lastProp = curProp;
+                                        curProp = curValue.ToString();
+                                    }
+                                    if (lastValue != "")
                                     {
                                         MessageGroup groupToStart =
                                             chatWindow.lastGroupsTriggered.First(
-                                                x => x.from == curValue.ToString()
+                                                x => x.from == lastProp.ToString()
                                             );
                                         int indexToStart = groupToStart.messages
                                             .First(x => x.Value.message == lastValue)
                                             .Key;
+                                        chatWindow.StartMessageGroup(groupToStart, indexToStart);
                                     }
                                     curDWindow = chatWindow.dialogueWindows[curValue.ToString()];
                                     break;
@@ -270,9 +291,13 @@ public class GameManager : MonoBehaviour
         playerName = savedData.playerName;
     }
 
-    public static void Quit()
+    public void Quit()
     {
+#if UNITY_EDITOR
+        EditorApplication.isPlaying = false;
+#elif UNITY_STANDALONE
         Application.Quit();
+#endif
     }
 
     void CompileMessages()

@@ -107,6 +107,7 @@ public class ChatWindow : MonoBehaviour, IPointerDownHandler
             if (child.gameObject.name == "Dialogue Content")
             {
                 dContent = child.gameObject;
+                break;
             }
         }
         chatSelectables[group.from].status.text = "Online";
@@ -130,6 +131,7 @@ public class ChatWindow : MonoBehaviour, IPointerDownHandler
         if (startMessageIndex != 0)
         {
             currentMessage = group.messages[startMessageIndex];
+            goto ContinueFromChoice;
         }
 
         NextMessage:
@@ -164,7 +166,7 @@ public class ChatWindow : MonoBehaviour, IPointerDownHandler
         Text messageTextComponent = Instantiate(objectToInstantiate, dContent.transform)
             .GetComponent<Text>();
         messageTextComponent.text = currentMessage.message.Replace("_", "  ");
-
+        ContinueFromChoice:
         if (currentMessage.choices != null)
         {
             GameObject optionsBox = dContent.transform.parent.parent
@@ -205,15 +207,21 @@ public class ChatWindow : MonoBehaviour, IPointerDownHandler
                         wasLastClickedOn = true;
                     }
                 );
-
-                Canvas.ForceUpdateCanvases();
             }
+            Canvas.ForceUpdateCanvases();
+
             yield return new WaitWhile(
                 delegate
                 {
-                    return optionsBox.GetComponentsInChildren<Transform>().Length > 1;
+                    if (optionsBox.GetComponentsInChildren<Transform>().Length > 1)
+                    {
+                        return true;
+                    }
+
+                    return false;
                 }
             );
+
             yield return new WaitForSeconds(2f);
             Canvas.ForceUpdateCanvases();
             goto Choice;

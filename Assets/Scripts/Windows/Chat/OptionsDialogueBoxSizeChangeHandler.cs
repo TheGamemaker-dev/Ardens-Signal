@@ -7,7 +7,8 @@ public class OptionsDialogueBoxSizeChangeHandler : MonoBehaviour
 {
     const float fullHeight = 163f;
 
-    [SerializeField] RectTransform dialogueTransform;
+    [SerializeField]
+    RectTransform dialogueTransform;
     RectTransform rectTransform;
     float totalSize = 0f;
     bool isReady = false;
@@ -16,6 +17,11 @@ public class OptionsDialogueBoxSizeChangeHandler : MonoBehaviour
     {
         rectTransform = GetComponent<RectTransform>();
         totalSize = dialogueTransform.rect.height + rectTransform.rect.height;
+
+        dialogueTransform.sizeDelta = new Vector2(
+            dialogueTransform.sizeDelta.x,
+            fullHeight - rectTransform.rect.height
+        );
         isReady = true;
     }
 
@@ -28,7 +34,10 @@ public class OptionsDialogueBoxSizeChangeHandler : MonoBehaviour
             {
                 rectHeight = 15f;
             }
-            dialogueTransform.sizeDelta = new Vector2(dialogueTransform.sizeDelta.x, fullHeight - rectHeight);
+            dialogueTransform.sizeDelta = new Vector2(
+                dialogueTransform.sizeDelta.x,
+                fullHeight - rectHeight
+            );
         }
     }
 }

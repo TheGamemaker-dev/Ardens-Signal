@@ -7,6 +7,9 @@ public class CanvasLoader : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
+        if (!GameManager.singleton.isNewGame)
+            return;
+
         foreach (Transform child in transform)
         {
             if (child.gameObject.name == "Cutscenes")
