@@ -47,6 +47,18 @@ public class GameManager : MonoBehaviour
     CutsceneManager cutsceneManager;
     AudioManager audioManager;
 
+    public static bool GetFlagState(string flag)
+    {
+        if (flags.Keys.Contains(flag))
+        {
+            return flags[flag];
+        }
+        else
+        {
+            return false;
+        }
+    }
+
     void Awake()
     {
         if (singleton && singleton != this)
@@ -90,69 +102,117 @@ public class GameManager : MonoBehaviour
                     StartCoroutine(cutsceneManager.StartCutscene(1));
                 }
                 else
-                { //continue only
-                    foreach (MessageGroup messageGroup in allMessages)
-                    {
-                        if (messageGroup.triggered)
-                        {
-                            chatWindow.lastGroupsTriggered.Add(messageGroup);
-                        }
-                    }
-                    JsonReader reader = new JsonTextReader(
-                        new StringReader(savedData.chatJsonData)
-                    );
-                    GameObject curDWindow = null;
-                    string lastValue = "";
-                    string curProp = "",
-                        lastProp = "";
-                    while (reader.Read())
-                    {
-#nullable enable
-                        object? curValue = reader.Value;
-#nullable disable
-                        JsonToken curToken = reader.TokenType;
-                        if (curValue != null)
-                        {
-                            switch (curToken)
-                            {
-                                case JsonToken.PropertyName:
-                                    if (curProp != curValue.ToString())
-                                    {
-                                        lastProp = curProp;
-                                        curProp = curValue.ToString();
-                                    }
-                                    if (lastValue != "")
-                                    {
-                                        MessageGroup groupToStart =
-                                            chatWindow.lastGroupsTriggered.First(
-                                                x => x.from == lastProp.ToString()
-                                            );
-                                        int indexToStart = groupToStart.messages
-                                            .First(x => x.Value.message == lastValue)
-                                            .Key;
-                                        chatWindow.StartMessageGroup(groupToStart, indexToStart);
-                                    }
-                                    curDWindow = chatWindow.dialogueWindows[curValue.ToString()];
-                                    break;
-                                case JsonToken.String:
-                                    chatWindow.SendMessageImmediate(
-                                        curDWindow,
-                                        curValue.ToString()[0] == '_',
-                                        curValue.ToString()
-                                    );
-                                    lastValue = curValue.ToString();
-                                    break;
-                                default:
-                                    Debug.LogWarning("Unknown Token: " + curToken);
-                                    break;
-                            }
-                        }
-                    }
+                {
+                    ContinueGame();
                 }
                 break;
             default:
                 break;
         }
+    }
+
+    private void ContinueGame()
+    {
+        foreach (MessageGroup messageGroup in allMessages)
+        {
+            if (messageGroup.triggered)
+            {
+                chatWindow.lastGroupsTriggered.Add(messageGroup);
+            }
+        }
+        JsonReader reader = new JsonTextReader(new StringReader(savedData.chatJsonData));
+        GameObject curDWindow = null;
+        string lastValue = "";
+        string curProp = "",
+            lastProp = "";
+        while (reader.Read())
+        {
+#nullable enable
+            object? curValue = reader.Value;
+#nullable disable
+            JsonToken curToken = reader.TokenType;
+            if (curValue != null)
+            {
+                switch (curToken)
+                {
+                    case JsonToken.PropertyName:
+                        if (curProp != curValue.ToString())
+                        {
+                            lastProp = curProp;
+                            curProp = curValue.ToString();
+                        }
+                        if (lastValue != "")
+                        {
+                            List<MessageGroup> groupsToStart = chatWindow.lastGroupsTriggered
+                                .Where(x => x.from == lastProp)
+                                .ToList();
+                            MessageGroup groupToStart = null;
+
+                            foreach (MessageGroup group in groupsToStart)
+                            {
+                                foreach (Message message in group.messages.Values)
+                                {
+                                    if (message.message == lastValue)
+                                    {
+                                        groupToStart = group;
+                                        break;
+                                    }
+                                }
+                                if (groupToStart != null)
+                                {
+                                    break;
+                                }
+                            }
+
+                            int indexToStart = groupToStart.messages
+                                .First(x => x.Value.message == lastValue)
+                                .Key;
+                            chatWindow.StartMessageGroup(groupToStart, indexToStart);
+                        }
+                        curDWindow = chatWindow.dialogueWindows[curValue.ToString()];
+                        break;
+                    case JsonToken.String:
+                        chatWindow.SendMessageImmediate(
+                            curDWindow,
+                            curValue.ToString()[0] == '_',
+                            curValue.ToString()
+                        );
+                        lastValue = curValue.ToString();
+                        break;
+                    case JsonToken.Comment:
+                        lastProp = curProp;
+                        List<MessageGroup> groupsToStart2 = chatWindow.lastGroupsTriggered
+                            .Where(x => x.from == lastProp)
+                            .ToList();
+                        MessageGroup groupToStart2 = null;
+
+                        foreach (MessageGroup group in groupsToStart2)
+                        {
+                            foreach (Message message in group.messages.Values)
+                            {
+                                if (message.message == lastValue)
+                                {
+                                    groupToStart2 = group;
+                                    break;
+                                }
+                            }
+                            if (groupToStart2 != null)
+                            {
+                                break;
+                            }
+                        }
+                        int indexToStart2 = groupToStart2.messages
+                            .First(x => x.Value.message == lastValue)
+                            .Key;
+                        chatWindow.StartMessageGroup(groupToStart2, indexToStart2);
+                        break;
+                    default:
+                        Debug.LogWarning("Unknown Token: " + curToken);
+                        break;
+                }
+            }
+        }
+        audioManager.PlaySound("Fan Whirring", true);
     }
 
     public void ChangeScene(string sceneName)
@@ -248,6 +308,8 @@ public class GameManager : MonoBehaviour
             }
             jsonWriter.WriteEndArray();
         }
+        jsonWriter.WriteComment("Load-bearing dummy data!");
+
         string messageJson = builder.ToString();
 
         GameData data = new GameData(flags, messageJson, playerName);
@@ -283,6 +345,7 @@ public class GameManager : MonoBehaviour
                 if (flags[curFlag] != needsTrue)
                 {
                     triggered = false;
+                    break;
                 }
             }
 

@@ -104,29 +104,41 @@ public class AudioManager : MonoBehaviour
 
     public IEnumerator StopAmbientSound(string soundName)
     {
-        AudioSource source = playingSources.First(x => x.clip == sfxs[soundName + " (ambient)"]);
-        AudioClip endClip = sfxs[soundName + " (end)"];
+        AudioSource source = null;
+        try
+        {
+            source = playingSources.First(x => x.clip == sfxs[soundName + " (ambient)"]);
+        }
+        catch (InvalidOperationException)
+        {
+            Debug.Log("No source of name " + soundName + " playing");
+        }
 
-        AudioSource source1 = Instantiate(soundPrefab, transform).GetComponent<AudioSource>();
-        source1.volume = 0.25f;
-        source1.clip = endClip;
+        if (source != null)
+        {
+            AudioClip endClip = sfxs[soundName + " (end)"];
 
-        source1.PlayScheduled(AudioSettings.dspTime + 1.0f);
+            AudioSource source1 = Instantiate(soundPrefab, transform).GetComponent<AudioSource>();
+            source1.volume = 0.25f;
+            source1.clip = endClip;
 
-        yield return new WaitForSecondsRealtime(1);
+            source1.PlayScheduled(AudioSettings.dspTime + 1.0f);
 
-        playingSources.Remove(source);
-        Destroy(source.gameObject);
+            yield return new WaitForSecondsRealtime(1);
 
-        yield return new WaitForSeconds(endClip.length);
+            playingSources.Remove(source);
+            Destroy(source.gameObject);
 
-        playingSources.Remove(source1);
-        Destroy(source1.gameObject);
+            yield return new WaitForSeconds(endClip.length);
+
+            playingSources.Remove(source1);
+            Destroy(source1.gameObject);
+        }
     }
 
     void OnDayEnd(string flag)
     {
-        if (flag.Contains("Done"))
+        if (flag.Contains("Done") && flag.Contains("day"))
         {
             StartCoroutine(StopAmbientSound("Fan Whirring"));
         }

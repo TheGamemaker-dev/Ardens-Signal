@@ -69,8 +69,9 @@ public class CutsceneManager : MonoBehaviour
     {
         bool hasProperSyntax = dayDone.Remove(3) == "day" && dayDone.Substring(4) == "Done";
         bool hasNum = int.TryParse(dayDone[3].ToString(), out int day);
+        bool triggeredYet = GameManager.GetFlagState("day" + (day + 1) + "Start");
 
-        if (hasProperSyntax && hasNum)
+        if (hasProperSyntax && hasNum && !triggeredYet)
         {
             StartCoroutine(StartCutscene(day + 1));
         }

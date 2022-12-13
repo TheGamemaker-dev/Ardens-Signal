@@ -1,8 +1,9 @@
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
+using System;
 
-public class MessageGroup
+public class MessageGroup : IEquatable<MessageGroup>
 {
     public Dictionary<int, string> jumps { get; }
     public Dictionary<int, Message> messages { get; }
@@ -107,5 +108,26 @@ public class MessageGroup
         }
         Stop:
         return new Message();
+    }
+
+    public bool Equals(MessageGroup other)
+    {
+        if (other == null)
+        {
+            return false;
+        }
+
+        // TODO: write your implementation of Equals() here
+
+        bool areEqual = jumps.IsEqualTo(other.jumps);
+        areEqual &= messages.IsEqualTo(other.messages);
+        areEqual &= instructions.IsEqualTo(other.instructions);
+        areEqual &= lineTypes.IsEqualTo(other.lineTypes);
+        areEqual &= from == other.from;
+        areEqual &= flagsRequired.IsEqualTo(other.flagsRequired);
+        areEqual &= triggered == other.triggered;
+        areEqual &= name == other.name;
+
+        return areEqual;
     }
 }

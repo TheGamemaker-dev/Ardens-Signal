@@ -61,7 +61,7 @@ public class ChatWindow : MonoBehaviour, IPointerDownHandler
         switch (flag)
         {
             case "aiInstalled":
-                chatSelectables["Signal"].gameObject.SetActive(GameManager.flags[flag]);
+                chatSelectables["Signal"].gameObject.SetActive(GameManager.GetFlagState(flag));
                 break;
             default:
                 break;
@@ -122,10 +122,17 @@ public class ChatWindow : MonoBehaviour, IPointerDownHandler
         //if choice, stop send messages and wait for input, then wait and send next message
         //if end, stop
         Message currentMessage = null;
-
         if (startMessageIndex == group.messages.Last().Key)
         {
             yield break;
+        }
+
+        if (group.messages.Keys.Contains(startMessageIndex))
+        {
+            if (group.messages[startMessageIndex].jumpTo == "end")
+            {
+                yield break;
+            }
         }
 
         if (startMessageIndex != 0)

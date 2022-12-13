@@ -17,5 +17,5 @@ error:
 ~PLAYSOUND:Flatline
 	I̶̤͆͐ ̴͈̇̂w̷̙̔̀ā̴͕̳̾s̸̼͋͆ ̷͎͐ñ̷̢͔͛ó̶̧ẗ̸̫́ ̵̪͎͑ḁ̸̲̿͌b̷̢͈̚l̶̜̓ę̶̥̆ ̵̢́̇ͅț̷͔̋ó̸̧̟̽ ̶̣͑̍r̷̓ͅe̴̘̓s̸̻̩̆t̸͈̏ä̷̹́r̷̭̊͒ť̶̞.̷̢̬̊ ̷̗̗̎͝P̵͍̠͊l̶̢̛e̴͉̕a̵̪̼͘s̴͓̣͆̈́ȩ̵̥̑ ̵̘͕̎͐ŕ̶̭ë̷͖p̶͈̌͌ḻ̵́y̸̢̿̂ ̴̛̙̖͊'̴͓̠̈́ṟ̸̹̐ę̸̠͘s̵̨̓̌t̷̺͙̒̀a̸̫̅r̴̦̀͊ṱ̸̦͗̓'̸͖̞̚ ̷͕̱̍t̶̮͂o̶̗͕͑ ̸͉͍͋̀r̸̯͝ë̴̖̹s̷̢̓ͅt̶̰͛̈à̵̖r̶̰̖̀ṱ̴̦̈́.̵̉ 
 ~SETFLAG:aiRestart
-~PLAYSOUND: Notification Buzz
+~PLAYSOUND:Notification Buzz
 ~STOP
