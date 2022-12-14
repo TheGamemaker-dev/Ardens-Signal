@@ -4,14 +4,13 @@ using System.Linq;
 using UnityEngine;
 using System;
 using UnityEngine.SceneManagement;
+using UnityEngine.AddressableAssets;
+using UnityEngine.ResourceManagement.AsyncOperations;
 
 public class AudioManager : MonoBehaviour
 {
     [SerializeField]
     GameObject soundPrefab;
-
-    [SerializeField]
-    Dictionary<string, AudioClip> sfxs = new Dictionary<string, AudioClip>();
 
     List<AudioSource> playingSources = new List<AudioSource>();
 
@@ -31,14 +30,14 @@ public class AudioManager : MonoBehaviour
             Destroy(gameObject);
             return;
         }
-        AudioClip[] audioClips = Resources.LoadAll<AudioClip>("Sound Effects");
-        foreach (AudioClip clip in audioClips)
-        {
-            sfxs.Add(clip.name, clip);
-        }
     }
 
     public void PlaySound(string name, bool loop)
+    {
+        StartCoroutine(PlaySoundAsync(name, loop));
+    }
+
+    IEnumerator PlaySoundAsync(string name, bool loop)
     {
         bool isAmbient = false;
         foreach (string sound in ambientSounds)
@@ -57,7 +56,12 @@ public class AudioManager : MonoBehaviour
         {
             AudioSource source = Instantiate(soundPrefab, transform).GetComponent<AudioSource>();
             source.loop = loop;
-            source.clip = sfxs[name];
+
+            AudioClip clip = null;
+
+            yield return GetAudioClip(name, r => clip = r);
+
+            source.clip = clip;
             playingSources.Add(source);
             source.Play();
             StartCoroutine(DestroySound(source));
@@ -81,8 +85,12 @@ public class AudioManager : MonoBehaviour
 
     IEnumerator PlayAmbientSound(string soundName)
     {
-        AudioClip startClip = sfxs[soundName + " (start)"];
-        AudioClip ambientClip = sfxs[soundName + " (ambient)"];
+        AudioClip startClip = null;
+        AudioClip ambientClip = null;
+
+        yield return GetAudioClip(soundName + " (start)", r => startClip = r);
+        yield return GetAudioClip(soundName + " (ambient)", r => ambientClip = r);
+
         AudioSource source = Instantiate(soundPrefab, transform).GetComponent<AudioSource>();
         playingSources.Add(source);
         source.clip = startClip;
@@ -105,9 +113,14 @@ public class AudioManager : MonoBehaviour
     public IEnumerator StopAmbientSound(string soundName)
     {
         AudioSource source = null;
+
+        AudioClip ambientClip = null;
+
+        yield return GetAudioClip(soundName + " (ambient)", r => ambientClip = r);
+
         try
         {
-            source = playingSources.First(x => x.clip == sfxs[soundName + " (ambient)"]);
+            source = playingSources.First(x => x.clip == ambientClip);
         }
         catch (InvalidOperationException)
         {
@@ -116,8 +129,9 @@ public class AudioManager : MonoBehaviour
 
         if (source != null)
         {
-            AudioClip endClip = sfxs[soundName + " (end)"];
+            AudioClip endClip = null;
 
+            yield return GetAudioClip(soundName + " (end)", r => endClip = r);
             AudioSource source1 = Instantiate(soundPrefab, transform).GetComponent<AudioSource>();
             source1.volume = 0.25f;
             source1.clip = endClip;
@@ -175,6 +189,26 @@ public class AudioManager : MonoBehaviour
             {
                 StartCoroutine(StopAmbientSound(sound));
             }
+        }
+    }
+
+    IEnumerator GetAudioClip(string name, Action<AudioClip> result)
+    {
+        AsyncOperationHandle<AudioClip> handle = Addressables.LoadAssetAsync<AudioClip>(
+            "SFX/" + name + ".wav"
+        );
+        while (!handle.IsDone)
+        {
+            yield return new WaitForEndOfFrame();
+        }
+
+        if (handle.Status == AsyncOperationStatus.Succeeded)
+        {
+            result(handle.Result);
+        }
+        else
+        {
+            Debug.LogWarning("Could not find sound" + name);
         }
     }
 }

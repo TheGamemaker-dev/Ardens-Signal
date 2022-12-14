@@ -59,6 +59,20 @@ public class GameManager : MonoBehaviour
         }
     }
 
+    public static void SetFlag(string flag)
+    {
+        if (flags.ContainsKey(flag))
+        {
+            Debug.Log("Flag set: " + flag);
+            flags[flag] = true;
+            onFlagSet?.Invoke(flag);
+        }
+        else
+        {
+            Debug.LogError("No flag found named " + flag);
+        }
+    }
+
     void Awake()
     {
         if (singleton && singleton != this)
@@ -111,110 +125,6 @@ public class GameManager : MonoBehaviour
         }
     }
 
-    private void ContinueGame()
-    {
-        foreach (MessageGroup messageGroup in allMessages)
-        {
-            if (messageGroup.triggered)
-            {
-                chatWindow.lastGroupsTriggered.Add(messageGroup);
-            }
-        }
-        JsonReader reader = new JsonTextReader(new StringReader(savedData.chatJsonData));
-        GameObject curDWindow = null;
-        string lastValue = "";
-        string curProp = "",
-            lastProp = "";
-        while (reader.Read())
-        {
-#nullable enable
-            object? curValue = reader.Value;
-#nullable disable
-            JsonToken curToken = reader.TokenType;
-            if (curValue != null)
-            {
-                switch (curToken)
-                {
-                    case JsonToken.PropertyName:
-                        if (curProp != curValue.ToString())
-                        {
-                            lastProp = curProp;
-                            curProp = curValue.ToString();
-                        }
-                        if (lastValue != "")
-                        {
-                            List<MessageGroup> groupsToStart = chatWindow.lastGroupsTriggered
-                                .Where(x => x.from == lastProp)
-                                .ToList();
-                            MessageGroup groupToStart = null;
-
-                            foreach (MessageGroup group in groupsToStart)
-                            {
-                                foreach (Message message in group.messages.Values)
-                                {
-                                    if (message.message == lastValue)
-                                    {
-                                        groupToStart = group;
-                                        break;
-                                    }
-                                }
-                                if (groupToStart != null)
-                                {
-                                    break;
-                                }
-                            }
-
-                            int indexToStart = groupToStart.messages
-                                .First(x => x.Value.message == lastValue)
-                                .Key;
-                            chatWindow.StartMessageGroup(groupToStart, indexToStart);
-                        }
-                        curDWindow = chatWindow.dialogueWindows[curValue.ToString()];
-                        break;
-                    case JsonToken.String:
-                        chatWindow.SendMessageImmediate(
-                            curDWindow,
-                            curValue.ToString()[0] == '_',
-                            curValue.ToString()
-                        );
-                        lastValue = curValue.ToString();
-                        break;
-                    case JsonToken.Comment:
-                        lastProp = curProp;
-                        List<MessageGroup> groupsToStart2 = chatWindow.lastGroupsTriggered
-                            .Where(x => x.from == lastProp)
-                            .ToList();
-                        MessageGroup groupToStart2 = null;
-
-                        foreach (MessageGroup group in groupsToStart2)
-                        {
-                            foreach (Message message in group.messages.Values)
-                            {
-                                if (message.message == lastValue)
-                                {
-                                    groupToStart2 = group;
-                                    break;
-                                }
-                            }
-                            if (groupToStart2 != null)
-                            {
-                                break;
-                            }
-                        }
-                        int indexToStart2 = groupToStart2.messages
-                            .First(x => x.Value.message == lastValue)
-                            .Key;
-                        chatWindow.StartMessageGroup(groupToStart2, indexToStart2);
-                        break;
-                    default:
-                        Debug.LogWarning("Unknown Token: " + curToken);
-                        break;
-                }
-            }
-        }
-        audioManager.PlaySound("Fan Whirring", true);
-    }
-
     public void ChangeScene(string sceneName)
     {
         SceneManager.LoadScene(sceneName);
@@ -236,48 +146,6 @@ public class GameManager : MonoBehaviour
                 string nameOfSound = instParams[1];
                 audioManager.PlaySound(nameOfSound, false);
                 break;
-        }
-    }
-
-    public static void SetFlag(string flag)
-    {
-        if (flags.ContainsKey(flag))
-        {
-            Debug.Log("Flag set: " + flag);
-            flags[flag] = true;
-            onFlagSet?.Invoke(flag);
-        }
-        else
-        {
-            Debug.LogError("No flag found named " + flag);
-        }
-    }
-
-    void StartMessageGroups(string flagSet)
-    {
-        foreach (MessageGroup group in allMessages)
-        {
-            bool canTrigger = true;
-            foreach (string flagNeeded in group.flagsRequired)
-            {
-                string flag = flagNeeded;
-                bool mustBeTrue = true;
-                if (flag[0] == '!')
-                {
-                    mustBeTrue = false;
-                    flag = flag.Substring(1);
-                }
-
-                if (flags[flag] == !mustBeTrue) //if at least one flag is incorrect
-                {
-                    canTrigger = false;
-                }
-            }
-            if (canTrigger && !group.triggered)
-            {
-                group.triggered = true;
-                chatWindow.StartMessageGroup(group);
-            }
         }
     }
 
@@ -363,9 +231,128 @@ public class GameManager : MonoBehaviour
 #endif
     }
 
-    void CompileMessages()
+    private void ContinueGame()
     {
-        TextAsset[] allMGFiles = Resources.LoadAll<TextAsset>("Message Groups");
+        foreach (MessageGroup messageGroup in allMessages)
+        {
+            if (messageGroup.triggered)
+            {
+                chatWindow.lastGroupsTriggered.Add(messageGroup);
+            }
+        }
+        JsonReader reader = new JsonTextReader(new StringReader(savedData.chatJsonData));
+        GameObject curDWindow = null;
+        string lastValue = "";
+        string curProp = "",
+            lastProp = "";
+        while (reader.Read())
+        {
+#nullable enable
+            object? curValue = reader.Value;
+#nullable disable
+            JsonToken curToken = reader.TokenType;
+            if (curValue != null)
+            {
+                switch (curToken)
+                {
+                    case JsonToken.PropertyName:
+                    case JsonToken.Comment:
+                        if (curProp != curValue.ToString())
+                        {
+                            lastProp = curProp;
+                            curProp = curValue.ToString();
+                        }
+                        if (lastValue != "")
+                        {
+                            List<MessageGroup> groupsToStart = chatWindow.lastGroupsTriggered
+                                .Where(x => x.from == lastProp)
+                                .ToList();
+                            MessageGroup groupToStart = null;
+
+                            foreach (MessageGroup group in groupsToStart)
+                            {
+                                foreach (Message message in group.messages.Values)
+                                {
+                                    if (message.message == lastValue)
+                                    {
+                                        groupToStart = group;
+                                        break;
+                                    }
+                                }
+                                if (groupToStart != null)
+                                {
+                                    break;
+                                }
+                            }
+
+                            int indexToStart = groupToStart.messages
+                                .First(x => x.Value.message == lastValue)
+                                .Key;
+                            chatWindow.StartMessageGroup(groupToStart, indexToStart);
+                        }
+                        curDWindow = chatWindow.dialogueWindows[curValue.ToString()];
+                        break;
+                    case JsonToken.String:
+                        chatWindow.SendMessageImmediate(
+                            curDWindow,
+                            curValue.ToString()[0] == '_',
+                            curValue.ToString()
+                        );
+                        lastValue = curValue.ToString();
+                        break;
+                    default:
+                        Debug.LogWarning("Unknown Token: " + curToken);
+                        break;
+                }
+            }
+        }
+        audioManager.PlaySound("Fan Whirring", true);
+    }
+
+    private void StartMessageGroups(string flagSet)
+    {
+        foreach (MessageGroup group in allMessages)
+        {
+            bool canTrigger = true;
+            foreach (string flagNeeded in group.flagsRequired)
+            {
+                string flag = flagNeeded;
+                bool mustBeTrue = true;
+                if (flag[0] == '!')
+                {
+                    mustBeTrue = false;
+                    flag = flag.Substring(1);
+                }
+
+                if (flags[flag] == !mustBeTrue) //if at least one flag is incorrect
+                {
+                    canTrigger = false;
+                }
+            }
+            if (canTrigger && !group.triggered)
+            {
+                group.triggered = true;
+                chatWindow.StartMessageGroup(group);
+            }
+        }
+    }
+
+    private void CompileMessages()
+    {
+        List<TextAsset> allMGFiles = new List<TextAsset>();
+        List<string> files = Directory
+            .EnumerateFiles(
+                Application.streamingAssetsPath + "/Message Groups",
+                "*.txt",
+                SearchOption.AllDirectories
+            )
+            .ToList();
+
+        foreach (string file in files)
+        {
+            string contents = File.ReadAllText(file);
+            allMGFiles.Add(new TextAsset(contents));
+        }
 
         foreach (TextAsset groupFile in allMGFiles)
         {
