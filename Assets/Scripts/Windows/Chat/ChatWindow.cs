@@ -86,6 +86,7 @@ public class ChatWindow : MonoBehaviour, IPointerDownHandler
 
     public void StartMessageGroup(MessageGroup group, int startMessageIndex = 0)
     {
+        Debug.Log("Starting group: " + group.name);
         GameObject dWindow = dialogueWindows[group.from];
         GameObject dContent = null;
         Transform[] children = dWindow.GetComponentsInChildren<Transform>();

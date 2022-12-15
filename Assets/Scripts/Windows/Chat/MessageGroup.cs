@@ -2,6 +2,7 @@ using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 using System;
+using System.IO;
 
 public class MessageGroup : IEquatable<MessageGroup>
 {
@@ -32,6 +33,26 @@ public class MessageGroup : IEquatable<MessageGroup>
         this.flagsRequired = flagsRequired;
         this.triggered = false;
         this.name = name;
+    }
+
+    public static MessageGroup GetGroupFromPreData(MessageGroupPreData data)
+    {
+        string filePath = Directory
+            .EnumerateFiles(
+                Application.streamingAssetsPath + "/Message Groups",
+                "*" + data.name + "*",
+                SearchOption.AllDirectories
+            )
+            .First();
+
+        string file = File.ReadAllText(filePath);
+
+        TextAsset asset = new TextAsset(file);
+        asset.name = data.name;
+
+        MessageGroup output = MessageGroupCompiler.Compile(asset);
+
+        return output;
     }
 
     public Message NextMessage(Message lastMessage)
@@ -117,8 +138,6 @@ public class MessageGroup : IEquatable<MessageGroup>
             return false;
         }
 
-        // TODO: write your implementation of Equals() here
-
         bool areEqual = jumps.IsEqualTo(other.jumps);
         areEqual &= messages.IsEqualTo(other.messages);
         areEqual &= instructions.IsEqualTo(other.instructions);
@@ -129,5 +148,20 @@ public class MessageGroup : IEquatable<MessageGroup>
         areEqual &= name == other.name;
 
         return areEqual;
+    }
+}
+
+public class MessageGroupPreData
+{
+    public bool triggered;
+
+    public string name;
+    public string[] flags { get; private set; }
+
+    public MessageGroupPreData(string name, string[] flags)
+    {
+        this.name = name;
+        this.flags = flags;
+        triggered = false;
     }
 }

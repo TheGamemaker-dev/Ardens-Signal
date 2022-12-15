@@ -30,8 +30,9 @@ day:
 		+oh yikes
 		+thats not worth a grounding!
 	yeah i know=
-		+you know I could always tutor you im great at math!
+		+you know I could always tutor you!
 		+want me to help you out?
+	_I'm great at math!
 	i wish but you live like a million miles away=
 		+yeah i wish we lived closer|AI
 		+we'll figure something out!|AI

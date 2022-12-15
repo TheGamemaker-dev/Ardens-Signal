@@ -53,7 +53,7 @@ lie:
 		+i loved it so much!
 		+it worked so well!
 	thanks that makes me really happy=
-		+of course!
+		+of course!|askOut
 		+thats great!|askOut
 askOut:
 	well anyways...=

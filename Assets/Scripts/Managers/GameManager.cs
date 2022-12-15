@@ -42,10 +42,11 @@ public class GameManager : MonoBehaviour
 
     static GameData savedData;
 
-    List<MessageGroup> allMessages = new List<MessageGroup>();
+    //List<MessageGroup> allMessages = new List<MessageGroup>();
     ChatWindow chatWindow;
     CutsceneManager cutsceneManager;
     AudioManager audioManager;
+    List<MessageGroupPreData> messageGroupPreData = new List<MessageGroupPreData>();
 
     public static bool GetFlagState(string flag)
     {
@@ -84,7 +85,7 @@ public class GameManager : MonoBehaviour
             singleton = this;
             DontDestroyOnLoad(gameObject);
             saveFile = Application.persistentDataPath + "/SaveData.dat";
-            CompileMessages();
+            GetAllMessageGroupPreData();
         }
     }
 
@@ -202,10 +203,10 @@ public class GameManager : MonoBehaviour
         flags = savedData.GetFlags();
 
         //set message groups as triggered
-        foreach (MessageGroup group in allMessages)
+        foreach (MessageGroupPreData group in messageGroupPreData)
         {
             bool triggered = true;
-            foreach (string flag in group.flagsRequired)
+            foreach (string flag in group.flags)
             {
                 bool needsTrue = flag[0] != '!';
                 string curFlag = needsTrue ? flag : flag.Remove(0, 1);
@@ -233,11 +234,11 @@ public class GameManager : MonoBehaviour
 
     private void ContinueGame()
     {
-        foreach (MessageGroup messageGroup in allMessages)
+        foreach (MessageGroupPreData messageGroup in messageGroupPreData)
         {
             if (messageGroup.triggered)
             {
-                chatWindow.lastGroupsTriggered.Add(messageGroup);
+                chatWindow.lastGroupsTriggered.Add(MessageGroup.GetGroupFromPreData(messageGroup));
             }
         }
         JsonReader reader = new JsonTextReader(new StringReader(savedData.chatJsonData));
@@ -290,7 +291,10 @@ public class GameManager : MonoBehaviour
                                 .Key;
                             chatWindow.StartMessageGroup(groupToStart, indexToStart);
                         }
-                        curDWindow = chatWindow.dialogueWindows[curValue.ToString()];
+                        if (curToken == JsonToken.PropertyName)
+                        {
+                            curDWindow = chatWindow.dialogueWindows[curValue.ToString()];
+                        }
                         break;
                     case JsonToken.String:
                         chatWindow.SendMessageImmediate(
@@ -311,10 +315,14 @@ public class GameManager : MonoBehaviour
 
     private void StartMessageGroups(string flagSet)
     {
-        foreach (MessageGroup group in allMessages)
+        foreach (MessageGroupPreData group in messageGroupPreData)
         {
+            if (!group.flags.Contains(flagSet))
+            {
+                continue;
+            }
             bool canTrigger = true;
-            foreach (string flagNeeded in group.flagsRequired)
+            foreach (string flagNeeded in group.flags)
             {
                 string flag = flagNeeded;
                 bool mustBeTrue = true;
@@ -332,33 +340,47 @@ public class GameManager : MonoBehaviour
             if (canTrigger && !group.triggered)
             {
                 group.triggered = true;
-                chatWindow.StartMessageGroup(group);
+                chatWindow.StartMessageGroup(MessageGroup.GetGroupFromPreData(group));
             }
         }
     }
 
-    private void CompileMessages()
+    private void GetAllMessageGroupPreData()
     {
         List<TextAsset> allMGFiles = new List<TextAsset>();
-        List<string> files = Directory
+        List<string> filePaths = Directory
             .EnumerateFiles(
                 Application.streamingAssetsPath + "/Message Groups",
                 "*.txt",
                 SearchOption.AllDirectories
             )
             .ToList();
-
-        foreach (string file in files)
+        foreach (string path in filePaths)
         {
-            string contents = File.ReadAllText(file);
-            allMGFiles.Add(new TextAsset(contents));
-        }
+            string[] pathList = path.Split(
+                new char[] { '/', '\\' },
+                StringSplitOptions.RemoveEmptyEntries
+            );
+            string name = pathList[pathList.Length - 1].Split('.')[0];
 
-        foreach (TextAsset groupFile in allMGFiles)
-        {
-            MessageGroup group = MessageGroupCompiler.Compile(groupFile);
+            string[] contents = File.ReadAllText(path).Split('\n');
+            string[] flags = new string[0];
 
-            allMessages.Add(group);
+            foreach (string line in contents)
+            {
+                if (line.Contains("FLAGSREQUIRED"))
+                {
+                    flags = line.Split(':')[1].Split(',');
+                    for (int i = 0; i < flags.Length; i++)
+                    {
+                        flags[i] = flags[i].RemoveWhitespace();
+                    }
+                    break;
+                }
+            }
+
+            MessageGroupPreData preData = new MessageGroupPreData(name, flags);
+            messageGroupPreData.Add(preData);
         }
     }
 }

@@ -210,5 +210,7 @@ public class AudioManager : MonoBehaviour
         {
             Debug.LogWarning("Could not find sound" + name);
         }
+
+        Addressables.Release(handle);
     }
 }
