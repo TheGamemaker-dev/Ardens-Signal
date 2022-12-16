@@ -21,7 +21,10 @@ public class PauseManager : MonoBehaviour
         pausePanel.SetActive(false);
         manager = GameManager.singleton;
         saveButton.onClick.AddListener(manager.Save);
-        quitButton.onClick.AddListener(manager.Quit);
+        quitButton.onClick.AddListener(delegate {
+            manager.Save();
+            manager.Quit();
+        });
     }
 
     private void Update()

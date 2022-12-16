@@ -42,7 +42,6 @@ public class GameManager : MonoBehaviour
 
     static GameData savedData;
 
-    //List<MessageGroup> allMessages = new List<MessageGroup>();
     ChatWindow chatWindow;
     CutsceneManager cutsceneManager;
     AudioManager audioManager;
@@ -162,6 +161,8 @@ public class GameManager : MonoBehaviour
         StringBuilder builder = new StringBuilder();
         StringWriter writer = new StringWriter(builder);
         JsonTextWriter jsonWriter = new JsonTextWriter(writer);
+
+        //Format the existing chats in json form
         jsonWriter.WriteStartObject();
         foreach (GameObject log in chatWindow.dialogueWindows.Values)
         {
@@ -193,8 +194,6 @@ public class GameManager : MonoBehaviour
 
     public void Load()
     {
-        bool dataExists = File.Exists(saveFile);
-
         BinaryFormatter bf = new BinaryFormatter();
         FileStream file = new FileStream(saveFile, FileMode.Open);
         savedData = (GameData)bf.Deserialize(file);
@@ -241,6 +240,7 @@ public class GameManager : MonoBehaviour
                 chatWindow.lastGroupsTriggered.Add(MessageGroup.GetGroupFromPreData(messageGroup));
             }
         }
+        //Unpack and display chat data
         JsonReader reader = new JsonTextReader(new StringReader(savedData.chatJsonData));
         GameObject curDWindow = null;
         string lastValue = "";
@@ -257,14 +257,15 @@ public class GameManager : MonoBehaviour
                 switch (curToken)
                 {
                     case JsonToken.PropertyName:
-                    case JsonToken.Comment:
+                    case JsonToken.Comment: //At the end or start of a chat log of a chat log
                         if (curProp != curValue.ToString())
                         {
                             lastProp = curProp;
                             curProp = curValue.ToString();
                         }
-                        if (lastValue != "")
+                        if (lastValue != "") //At the end of a chat log, pick up the chat from where it left off
                         {
+                            //Find the possible chats we could be starting from
                             List<MessageGroup> groupsToStart = chatWindow.lastGroupsTriggered
                                 .Where(x => x.from == lastProp)
                                 .ToList();
@@ -285,18 +286,18 @@ public class GameManager : MonoBehaviour
                                     break;
                                 }
                             }
-
+                            //Find the index we're starting from and start from there
                             int indexToStart = groupToStart.messages
                                 .First(x => x.Value.message == lastValue)
                                 .Key;
                             chatWindow.StartMessageGroup(groupToStart, indexToStart);
                         }
-                        if (curToken == JsonToken.PropertyName)
+                        if (curToken == JsonToken.PropertyName) //At the start of a chat log
                         {
                             curDWindow = chatWindow.dialogueWindows[curValue.ToString()];
                         }
                         break;
-                    case JsonToken.String:
+                    case JsonToken.String: //At a chat message
                         chatWindow.SendMessageImmediate(
                             curDWindow,
                             curValue.ToString()[0] == '_',
@@ -347,7 +348,6 @@ public class GameManager : MonoBehaviour
 
     private void GetAllMessageGroupPreData()
     {
-        List<TextAsset> allMGFiles = new List<TextAsset>();
         List<string> filePaths = Directory
             .EnumerateFiles(
                 Application.streamingAssetsPath + "/Message Groups",

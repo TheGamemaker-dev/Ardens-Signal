@@ -73,6 +73,8 @@ public class DesktopIcon : MonoBehaviour, IPointerDownHandler
 
     void SetHighlighted(bool highlighted)
     {
+        if(isHighlighted == highlighted) { return; }
+
         if (highlighted)
         {
             image.color = highlightedColor;

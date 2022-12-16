@@ -9,6 +9,7 @@ public class CutsceneManager : MonoBehaviour
     public UnityAction cutsceneStarted;
 
     [SerializeField]
+    [Tooltip("Put these cutscenes in the order they appear in the game")]
     VideoClip[] cutscenes; //in chronological order
 
     VideoPlayer player;
@@ -41,7 +42,7 @@ public class CutsceneManager : MonoBehaviour
             fade.FadeOut();
             yield return new WaitForSeconds(fade.length + 2);
         }
-        if (day >= 3)
+        if (day >= 3) //Nothing past day 3 yet
         {
             GameManager.singleton.ChangeScene("Demo");
             yield break;

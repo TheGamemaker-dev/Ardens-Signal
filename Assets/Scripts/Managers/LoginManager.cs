@@ -15,11 +15,19 @@ public class LoginManager : MonoBehaviour
         nameText.text = GameManager.singleton.playerName;
     }
 
+    private void Update()
+    {
+        if (Input.GetKeyDown(KeyCode.Return))
+        {
+            LogIn();
+        }
+    }
+
     public void LogIn()
     {
         if (passwordField.text == "password")
         {
-            Invoke("SetLogInFlag", 2);
+            Invoke(nameof(SetLogInFlag), 2);
             FindObjectOfType<AudioManager>().PlaySound("Accomplishment", false);
             gameObject.transform.SetAsFirstSibling();
         }
