@@ -7,7 +7,8 @@ using UnityEngine.UI;
 [RequireComponent(typeof(DoubleClickHandler))]
 public class DesktopIcon : MonoBehaviour, IPointerDownHandler
 {
-    Image image, textContainer;
+    Image image,
+        textContainer;
     Text label;
     DoubleClickHandler doubleClickHandler;
 
@@ -15,9 +16,14 @@ public class DesktopIcon : MonoBehaviour, IPointerDownHandler
     bool clickedOn = false;
     Color highlightedColor = new Color32(74, 58, 253, 255);
 
-    [SerializeField] Sprite icon;
-    [SerializeField] string labelText;
-    [SerializeField] GameObject window;
+    [SerializeField]
+    Sprite icon;
+
+    [SerializeField]
+    string labelText;
+
+    [SerializeField]
+    Window window;
 
     #region Setup
     void Awake()
@@ -39,10 +45,12 @@ public class DesktopIcon : MonoBehaviour, IPointerDownHandler
 
         label = GetComponentInChildren<Text>();
     }
+
     void OnEnable()
     {
         doubleClickHandler.doubleClicked += OpenWindow;
     }
+
     void Start()
     {
         image.sprite = icon;
@@ -50,6 +58,7 @@ public class DesktopIcon : MonoBehaviour, IPointerDownHandler
         textContainer.color = new Color(0, 0, 0, 0);
         label.text = labelText;
     }
+
     void OnDisable()
     {
         doubleClickHandler.doubleClicked -= OpenWindow;
@@ -65,6 +74,7 @@ public class DesktopIcon : MonoBehaviour, IPointerDownHandler
         }
         clickedOn = false;
     }
+
     public void OnPointerDown(PointerEventData eventData)
     {
         clickedOn = true;
@@ -73,7 +83,10 @@ public class DesktopIcon : MonoBehaviour, IPointerDownHandler
 
     void SetHighlighted(bool highlighted)
     {
-        if(isHighlighted == highlighted) { return; }
+        if (isHighlighted == highlighted)
+        {
+            return;
+        }
 
         if (highlighted)
         {

@@ -42,10 +42,11 @@ public class GameManager : MonoBehaviour
 
     static GameData savedData;
 
+	readonly List<MessageGroupPreData> messageGroupPreData = new List<MessageGroupPreData>();
+
     ChatWindow chatWindow;
     CutsceneManager cutsceneManager;
     AudioManager audioManager;
-    List<MessageGroupPreData> messageGroupPreData = new List<MessageGroupPreData>();
 
     public static bool GetFlagState(string flag)
     {
@@ -219,7 +220,7 @@ public class GameManager : MonoBehaviour
 
             group.triggered = triggered;
         }
-        playerName = savedData.playerName;
+        playerName = savedData.PlayerName;
     }
 
     public void Quit()
@@ -241,7 +242,7 @@ public class GameManager : MonoBehaviour
             }
         }
         //Unpack and display chat data
-        JsonReader reader = new JsonTextReader(new StringReader(savedData.chatJsonData));
+        JsonReader reader = new JsonTextReader(new StringReader(savedData.ChatJsonData));
         GameObject curDWindow = null;
         string lastValue = "";
         string curProp = "",
@@ -388,10 +389,10 @@ public class GameManager : MonoBehaviour
 [Serializable]
 public class GameData
 {
-    public string playerName { get; set; }
-    public string chatJsonData { get; set; }
+    public string PlayerName { get; set; }
+    public string ChatJsonData { get; set; }
 
-    string flagsJsonData;
+	readonly string flagsJsonData;
 
     public GameData(Dictionary<string, bool> flags, string chatJsonData, string playerName)
     {
@@ -408,8 +409,8 @@ public class GameData
 
         flagsJsonData = builder.ToString();
 
-        this.chatJsonData = chatJsonData;
-        this.playerName = playerName;
+        this.ChatJsonData = chatJsonData;
+        this.PlayerName = playerName;
     }
 
     public Dictionary<string, bool> GetFlags()

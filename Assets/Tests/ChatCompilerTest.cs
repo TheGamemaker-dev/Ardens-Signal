@@ -27,8 +27,8 @@ public class ChatCompilerTest
 
     string GetChatFile(string name)
     {
-        string output = "";
-        try
+		string output;
+		try
         {
             string path = Application.dataPath + "/Tests/Test Chat Files/" + name + ".txt";
             output = File.ReadAllText(path);
@@ -40,5 +40,4 @@ public class ChatCompilerTest
         return output;
     }
 
-    void AssertChatsAreEqual(MessageGroup group1, MessageGroup group2) { }
 }

@@ -10,13 +10,11 @@ public class OptionsDialogueBoxSizeChangeHandler : MonoBehaviour
     [SerializeField]
     RectTransform dialogueTransform;
     RectTransform rectTransform;
-    float totalSize = 0f;
     bool isReady = false;
 
     void Start()
     {
         rectTransform = GetComponent<RectTransform>();
-        totalSize = dialogueTransform.rect.height + rectTransform.rect.height;
 
         dialogueTransform.sizeDelta = new Vector2(
             dialogueTransform.sizeDelta.x,
