@@ -5,7 +5,7 @@ using UnityEngine.UI;
 using UnityEngine.EventSystems;
 
 [RequireComponent(typeof(RawImage))]
-public class Painting : MonoBehaviour, IPointerDownHandler, IDragHandler
+public class Painting : MonoBehaviour, IDragHandler
 {
     Texture2D texture2D;
     RawImage rawImage;
@@ -81,16 +81,6 @@ public class Painting : MonoBehaviour, IPointerDownHandler, IDragHandler
             lastMousePos = currentMousePos;
             currentMousePos = Input.mousePosition;
         }
-    }
-    public void OnPointerDown(PointerEventData data)
-    {
-        Vector2 imagePos = rectTransform.position;
-        Vector2 pos = data.position - imagePos;
-        pos /= paintScaleFactor;
-
-        Vector2Int posInt = pos.Round();
-
-        Paint(posInt, paintWindow.isPaintMode ? paintWindow.currentColor : Color.white, size);
     }
 
     public void OnDrag(PointerEventData data)
