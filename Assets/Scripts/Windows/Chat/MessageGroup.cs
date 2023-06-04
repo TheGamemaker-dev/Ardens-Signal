@@ -127,7 +127,7 @@ public class MessageGroup : IEquatable<MessageGroup>
                     throw new UnityException("Unknown line type: " + nextLineType);
             }
         }
-        Stop:
+    Stop:
         return new Message();
     }
 

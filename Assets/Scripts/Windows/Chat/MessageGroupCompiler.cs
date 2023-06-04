@@ -21,6 +21,7 @@ public static class MessageGroupCompiler
         for (int i = 0; i < fullFile.Length; i++)
         {
             string line = fullFile[i];
+            line = line.RemoveLineBreaks();
 
             //if it starts with \t (tab), then its a message or response
             if (line[0] == '\t')
@@ -30,7 +31,7 @@ public static class MessageGroupCompiler
                     Message message = new Message();
                     int iChange = 0;
                     //check for choices
-                    if (line[line.Length - 2] == '=') //a message with a = at the end has choices
+                    if (line[line.Length - 1] == '=') //a message with a = at the end has choices
                     {
                         List<Choice> choices = new List<Choice>();
                         line = line.Remove(line.Length - 1);
@@ -132,7 +133,7 @@ public static class MessageGroupCompiler
             }
             else //its a jump
             {
-                string jump = line.Remove(line.Length - 2);
+                string jump = line.RemoveLineBreaks().Remove(line.Length - 1);
                 jumps.Add(i, jump);
                 lineTypes.Add(i, "jump");
             }

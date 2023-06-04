@@ -42,7 +42,7 @@ public class GameManager : MonoBehaviour
 
     static GameData savedData;
 
-	readonly List<MessageGroupPreData> messageGroupPreData = new List<MessageGroupPreData>();
+    readonly List<MessageGroupPreData> messageGroupPreData = new List<MessageGroupPreData>();
 
     ChatWindow chatWindow;
     CutsceneManager cutsceneManager;
@@ -296,6 +296,7 @@ public class GameManager : MonoBehaviour
                         if (curToken == JsonToken.PropertyName) //At the start of a chat log
                         {
                             curDWindow = chatWindow.dialogueWindows[curValue.ToString()];
+                            lastValue = "";
                         }
                         break;
                     case JsonToken.String: //At a chat message
@@ -392,7 +393,7 @@ public class GameData
     public string PlayerName { get; set; }
     public string ChatJsonData { get; set; }
 
-	readonly string flagsJsonData;
+    readonly string flagsJsonData;
 
     public GameData(Dictionary<string, bool> flags, string chatJsonData, string playerName)
     {
