@@ -353,7 +353,7 @@ public class GameManager : MonoBehaviour
         List<string> filePaths = Directory
             .EnumerateFiles(
                 Application.streamingAssetsPath + "/Message Groups",
-                "*.txt",
+                "*.chat",
                 SearchOption.AllDirectories
             )
             .ToList();

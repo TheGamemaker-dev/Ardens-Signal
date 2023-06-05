@@ -8,7 +8,7 @@ public static class MessageGroupCompiler
     public static MessageGroup Compile(TextAsset file)
     {
         string[] fullFile = file.text.Split(
-            new char[] { '\n' },
+            new char[] { '\n', '\r' },
             System.StringSplitOptions.RemoveEmptyEntries
         );
         Dictionary<int, string> jumps = new Dictionary<int, string>();

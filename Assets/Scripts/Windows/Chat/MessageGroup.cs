@@ -6,13 +6,13 @@ using System.IO;
 
 public class MessageGroup : IEquatable<MessageGroup>
 {
-    public Dictionary<int, string> jumps { get; }
-    public Dictionary<int, Message> messages { get; }
-    public Dictionary<int, string> instructions { get; }
-    public Dictionary<int, string> lineTypes { get; }
-    public string from { get; }
-    public string[] flagsRequired { get; }
-    public bool triggered { get; set; }
+    public Dictionary<int, string> jumps;
+    public Dictionary<int, Message> messages;
+    public Dictionary<int, string> instructions;
+    public Dictionary<int, string> lineTypes;
+    public string from;
+    public string[] flagsRequired;
+    public bool triggered;
     public string name;
 
     public MessageGroup(
@@ -33,6 +33,18 @@ public class MessageGroup : IEquatable<MessageGroup>
         this.flagsRequired = flagsRequired;
         this.triggered = false;
         this.name = name;
+    }
+
+    public MessageGroup()
+    {
+        jumps = new Dictionary<int, string>();
+        messages = new Dictionary<int, Message>();
+        instructions = new Dictionary<int, string>();
+        lineTypes = new Dictionary<int, string>();
+        from = "";
+        flagsRequired = new string[] { };
+        triggered = false;
+        name = "";
     }
 
     public static MessageGroup GetGroupFromPreData(MessageGroupPreData data)
@@ -127,7 +139,7 @@ public class MessageGroup : IEquatable<MessageGroup>
                     throw new UnityException("Unknown line type: " + nextLineType);
             }
         }
-    Stop:
+        Stop:
         return new Message();
     }
 
