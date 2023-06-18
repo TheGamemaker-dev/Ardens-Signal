@@ -1,11 +1,13 @@
+using UnityEngine.Events;
+
 public class Choice
 {
-    public string choiceMessage { get; }
-    public string jumpTo { get; }
+    public string choiceMessage;
+    public Message jumpTo;
 
-    public Choice(string choiceMessage, string jumpTo)
+    public Choice()
     {
-        this.choiceMessage = choiceMessage;
-        this.jumpTo = jumpTo;
+        choiceMessage = "";
+        jumpTo = null;
     }
 }

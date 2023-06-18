@@ -4,12 +4,14 @@ using UnityEngine;
 using UnityEngine.EventSystems;
 using System.Linq;
 using UnityEngine.UI;
+using Newtonsoft.Json;
+using System.IO;
 
 public class ChatWindow : MonoBehaviour, IPointerDownHandler
 {
-    public bool wasLastClickedOn = false;
     public Dictionary<string, GameObject> dialogueWindows = new Dictionary<string, GameObject>();
-    public List<MessageGroup> lastGroupsTriggered = new List<MessageGroup>();
+
+    internal bool wasLastClickedOn = false;
 
     [SerializeField]
     GameObject messageFromThemPrefab,
@@ -18,8 +20,8 @@ public class ChatWindow : MonoBehaviour, IPointerDownHandler
     [SerializeField]
     GameObject optionPrefab;
 
-    bool wasClickedOn = false;
     Dictionary<string, ChatSelectable> chatSelectables = new Dictionary<string, ChatSelectable>();
+    bool wasClickedOn = false;
     AudioManager audioManager;
 
     void OnEnable()
@@ -61,11 +63,26 @@ public class ChatWindow : MonoBehaviour, IPointerDownHandler
         switch (flag)
         {
             case "aiInstalled":
-                chatSelectables["Signal"].gameObject.SetActive(GameManager.GetFlagState(flag));
+                chatSelectables["Signal"].gameObject.SetActive(
+                    GameManager.singleton.GetFlagState(flag)
+                );
                 break;
             default:
                 break;
         }
+    }
+
+    Transform GetContentObject(GameObject window)
+    {
+        Transform[] children = window.GetComponentsInChildren<Transform>();
+        foreach (Transform child in children)
+        {
+            if (child.gameObject.name == "Dialogue Content")
+            {
+                return child;
+            }
+        }
+        return null;
     }
 
     //keeping track of if the window was the last thing to be clicked
@@ -88,172 +105,127 @@ public class ChatWindow : MonoBehaviour, IPointerDownHandler
     {
         Debug.Log("Starting group: " + group.name);
         GameObject dWindow = dialogueWindows[group.from];
-        GameObject dContent = null;
+        GameObject dContent = GetContentObject(dWindow).gameObject;
         Transform[] children = dWindow.GetComponentsInChildren<Transform>();
 
-        if (lastGroupsTriggered.Where(x => x.from == group.from).Count() == 0)
-        {
-            lastGroupsTriggered.Add(group);
-        }
-        else
-        {
-            int indexToReplace = lastGroupsTriggered.IndexOf(
-                lastGroupsTriggered.Where(x => x.from == group.from).First()
-            );
-            lastGroupsTriggered[indexToReplace] = group;
-        }
+        GameObject optionsParent = children.First(x => x.CompareTag("Choice Parent")).gameObject;
 
-        foreach (Transform child in children)
-        {
-            if (child.gameObject.name == "Dialogue Content")
-            {
-                dContent = child.gameObject;
-                break;
-            }
-        }
-        chatSelectables[group.from].status.text = "Online";
-        chatSelectables[group.from].status.color = Color.green;
+        SetStatus(group.from, true);
+
         //StartCoroutine SendMessage given group, and only stop if choice needs making or end of file reached
-        StartCoroutine(StartDialog(group, dContent, startMessageIndex));
+        StartCoroutine(StartDialog(group, dContent, optionsParent));
     }
 
-    IEnumerator StartDialog(MessageGroup group, GameObject dContent, int startMessageIndex)
+    /// <summary>
+    /// Start a message group in the chat window
+    /// </summary>
+    /// <param name="group">Group to start</param>
+    /// <param name="dContent">The dialog content object that the message objects will be instantiated under</param>
+    IEnumerator StartDialog(MessageGroup group, GameObject dContent, GameObject optionsParent)
     {
-        //if no choices, wait then send next message
-        //if choice, stop send messages and wait for input, then wait and send next message
-        //if end, stop
-        Message currentMessage = null;
-        if (startMessageIndex == group.messages.Last().Key)
-        {
-            yield break;
-        }
+        Message currentMessage = group.rootMessage;
 
-        if (group.messages.Keys.Contains(startMessageIndex))
+        do
         {
-            if (group.messages[startMessageIndex].jumpTo == "end")
+            if (currentMessage.message != "")
             {
-                yield break;
+                SendMessageImmediate(dContent, currentMessage.fromYou, currentMessage.message);
             }
-        }
-
-        if (startMessageIndex != 0)
-        {
-            currentMessage = group.messages[startMessageIndex];
-            goto ContinueFromChoice;
-        }
-
-        NextMessage:
-        if (currentMessage == null)
-        {
-            currentMessage = group.messages.First().Value;
-        }
-        else
-        {
-            currentMessage = group.NextMessage(currentMessage);
-        }
-
-        if (currentMessage.message == null)
-        {
-            goto End;
-        }
-        Choice:
-        //messages sent from the player start with an underscore
-        GameObject objectToInstantiate;
-        if (currentMessage.message[0] != '_')
-        {
-            objectToInstantiate = messageFromThemPrefab;
-            if (!wasLastClickedOn)
+            if (currentMessage.playSound != "")
             {
-                audioManager.PlaySound("Text Notification", false);
+                AudioManager.singleton.PlaySound(currentMessage.playSound, false);
             }
-        }
-        else
-        {
-            objectToInstantiate = messageFromYouPrefab;
-        }
-        Text messageTextComponent = Instantiate(objectToInstantiate, dContent.transform)
-            .GetComponent<Text>();
-        messageTextComponent.text = currentMessage.message.Replace("_", "  ");
-        ContinueFromChoice:
-        if (currentMessage.choices != null)
-        {
-            GameObject optionsBox = dContent.transform.parent.parent
-                .GetComponentsInChildren<Transform>()
-                .FirstOrDefault(x => x.gameObject.name == "Middle")
-                .gameObject;
-
-            RectTransform rectTransform = (RectTransform)optionsBox.transform;
-            rectTransform.sizeDelta = new Vector2(
-                rectTransform.sizeDelta.x,
-                15 * currentMessage.choices.Length
-            );
-
-            for (int i = 0; i < currentMessage.choices.Length; i++)
+            if (currentMessage.setFlag != "")
             {
-                Choice choice = currentMessage.choices[i];
-                Text optionTextComponent = Instantiate(optionPrefab, optionsBox.transform)
-                    .GetComponent<Text>();
-                optionTextComponent.text = choice.choiceMessage;
-
-                int j = i;
-                Button optionTextButton = optionTextComponent.gameObject.GetComponent<Button>();
-                optionTextButton.onClick.AddListener(
-                    delegate
-                    {
-                        currentMessage = group.NextMessage(currentMessage, j);
-                        Text messageFromYouTextComponent = Instantiate(
-                                messageFromYouPrefab,
-                                dContent.transform
-                            )
-                            .GetComponent<Text>();
-                        messageFromYouTextComponent.text = choice.choiceMessage + "  ";
-                        foreach (Transform child in optionsBox.transform)
-                        {
-                            Destroy(child.gameObject);
-                        }
-                        rectTransform.sizeDelta = new Vector2(rectTransform.sizeDelta.x, 0);
-                        wasLastClickedOn = true;
-                    }
-                );
+                GameManager.singleton.SetFlag(currentMessage.setFlag);
             }
-            Canvas.ForceUpdateCanvases();
 
-            yield return new WaitWhile(
-                delegate
+            if (currentMessage.choices[0].choiceMessage != "")
+            {
+                foreach (Choice choice in currentMessage.choices)
                 {
-                    if (optionsBox.GetComponentsInChildren<Transform>().Length > 1)
-                    {
-                        return true;
-                    }
-
-                    return false;
+                    Choice curChoice = choice;
+                    GameObject option = Instantiate(optionPrefab, optionsParent.transform);
+                    option.GetComponentInChildren<Text>().text = curChoice.choiceMessage;
+                    option
+                        .GetComponent<Button>()
+                        .onClick.AddListener(() =>
+                        {
+                            currentMessage = curChoice.jumpTo;
+                            SendMessageImmediate(dContent, true, curChoice.choiceMessage);
+                            foreach (Transform child in optionsParent.transform)
+                            {
+                                Destroy(child.gameObject);
+                            }
+                        });
                 }
-            );
+                yield return new WaitWhile(() => optionsParent.transform.childCount > 0);
+            }
+            else
+            {
+                currentMessage = currentMessage.choices[0].jumpTo;
+            }
 
-            yield return new WaitForSeconds(2f);
-            Canvas.ForceUpdateCanvases();
-            goto Choice;
-        }
-        else
-        {
-            yield return new WaitForSeconds(2f);
-            goto NextMessage;
-        }
-        End:
-        chatSelectables[group.from].status.text = "Offline";
-        chatSelectables[group.from].status.color = Color.red;
-        yield return null;
+            yield return new WaitForSeconds(1.5f);
+        } while (currentMessage.choices[0] != null);
+        SetStatus(group.from, false);
     }
 
     public void SendMessageImmediate(GameObject dialogWindow, bool fromYou, string message)
     {
         GameObject objectToInstantiate = fromYou ? messageFromYouPrefab : messageFromThemPrefab;
 
-        Text messageTextComponent = Instantiate(
-                objectToInstantiate,
-                dialogWindow.GetComponentInChildren<VerticalLayoutGroup>().gameObject.transform
-            )
+        Text messageTextComponent = Instantiate(objectToInstantiate, dialogWindow.transform)
             .GetComponent<Text>();
         messageTextComponent.text = message.Replace("_", "  ");
+    }
+
+    void SetStatus(string name, bool status)
+    {
+        chatSelectables[name].status.text = status ? "Online" : "Offline";
+        chatSelectables[name].status.color = status ? Color.green : Color.red;
+    }
+
+    public void MassMessageSend(string messageData)
+    {
+        JsonTextReader reader = new JsonTextReader(new StringReader(messageData));
+        GameObject dContent = null;
+
+        while (reader.Read())
+        {
+            JsonToken token = reader.TokenType;
+            string value = reader.Value == null ? "" : reader.Value.ToString();
+
+            switch (token)
+            {
+                case JsonToken.PropertyName:
+                    if (dialogueWindows.ContainsKey(value))
+                    {
+                        dContent = GetContentObject(dialogueWindows[value]).gameObject;
+                    }
+                    else
+                    {
+                        Debug.LogError("No dialogue window with name: " + value);
+                    }
+                    break;
+                case JsonToken.String:
+                    string message = value;
+                    bool fromYou = false;
+                    if (message[0] == '_')
+                    {
+                        fromYou = true;
+                        message = message.Substring(1);
+                    }
+                    if (dContent == null)
+                    {
+                        Debug.LogError("No dialogue window set");
+                        continue;
+                    }
+                    SendMessageImmediate(dContent, fromYou, message);
+                    break;
+                default:
+                    break;
+            }
+        }
     }
 }

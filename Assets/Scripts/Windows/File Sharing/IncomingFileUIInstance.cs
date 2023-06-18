@@ -5,7 +5,8 @@ using UnityEngine.UI;
 
 public class IncomingFileUIInstance : MonoBehaviour
 {
-    [SerializeField] Button button;
+    [SerializeField]
+    Button button;
 
     IncomingFile file;
     FileShareWindow fileShareWindow;
@@ -25,7 +26,9 @@ public class IncomingFileUIInstance : MonoBehaviour
     public void SetFileRep(IncomingFile newFile)
     {
         file = newFile;
-        GetComponent<Image>().sprite = FindObjectOfType<FileShareWindow>().fileImages[(int)file.type];
+        GetComponent<Image>().sprite = FindObjectOfType<FileShareWindow>().fileImages[
+            (int)file.type
+        ];
         GetComponentInChildren<Text>().text = file.name;
     }
 
@@ -41,6 +44,6 @@ public class IncomingFileUIInstance : MonoBehaviour
 
     void SetDownloadedFlag()
     {
-        GameManager.SetFlag(file.downloadedFlag);
+        GameManager.singleton.SetFlag(file.downloadedFlag);
     }
 }

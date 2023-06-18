@@ -5,9 +5,12 @@ using UnityEngine.UI;
 
 public class LoginManager : MonoBehaviour
 {
+    [SerializeField]
+    InputField passwordField;
 
-    [SerializeField] InputField passwordField;
-    [SerializeField] Text nameText, errorText;
+    [SerializeField]
+    Text nameText,
+        errorText;
 
     // Start is called before the first frame update
     void Start()
@@ -39,7 +42,7 @@ public class LoginManager : MonoBehaviour
 
     void SetLogInFlag()
     {
-        GameManager.SetFlag("logIn");
+        GameManager.singleton.SetFlag("logIn");
         Destroy(gameObject);
     }
 }

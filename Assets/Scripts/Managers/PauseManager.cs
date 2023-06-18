@@ -1,5 +1,3 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -8,24 +6,7 @@ public class PauseManager : MonoBehaviour
     [SerializeField]
     GameObject pausePanel;
 
-    [SerializeField]
-    Button saveButton,
-        quitButton;
-
-    GameManager manager;
-
     bool isPaused = false;
-
-    private void Start()
-    {
-        pausePanel.SetActive(false);
-        manager = GameManager.singleton;
-        saveButton.onClick.AddListener(manager.Save);
-        quitButton.onClick.AddListener(delegate {
-            manager.Save();
-            manager.Quit();
-        });
-    }
 
     private void Update()
     {

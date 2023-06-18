@@ -1,11 +1,10 @@
 ~FROM:Arden
 ~FLAGSREQUIRED:logIn
-start:
+
 	hey!=
-		+hi!|next
-		+hello there!|next
-		+hey!|next
-next:
+		+hi!
+		+hello there!
+		+hey!
 	how was your day?=
 		+it was pretty good|day
 		+it was really weird, I had this crazy dream|dream
@@ -52,6 +51,5 @@ AI:
 	and i would love if you tried it=
 		+of course, send it over
 		+you dont have to ask me twice!
-	alright sending it now through File Share! 
 ~SETFLAG:downloadAi
-~STOP
+	alright sending it now through File Share! 

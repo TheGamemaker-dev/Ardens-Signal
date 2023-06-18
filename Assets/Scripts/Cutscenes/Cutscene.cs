@@ -20,7 +20,7 @@ public class Cutscene : MonoBehaviour
 
     public void SetFlag(string flag)
     {
-        GameManager.SetFlag(flag);
+        GameManager.singleton.SetFlag(flag);
     }
 
     public void ChangeScene(string scene)

@@ -3,9 +3,8 @@ using Newtonsoft.Json;
 using System;
 using System.IO;
 using System.Linq;
-using System.Text;
 using System.Collections.Generic;
-using System.Runtime.Serialization.Formatters.Binary;
+using System.Text.RegularExpressions;
 
 using UnityEditor;
 
@@ -35,20 +34,16 @@ public class GameManager : MonoBehaviour
 
     public static GameManager singleton;
     public static UnityAction<string> onFlagSet;
-    public static string saveFile;
+    public static UnityAction<int> onDayEnd;
 
-    public string playerName;
-    public bool isNewGame = false;
-
-    static GameData savedData;
-
-    readonly List<MessageGroupPreData> messageGroupPreData = new List<MessageGroupPreData>();
+    internal string playerName;
+    internal bool isNewGame = false;
 
     ChatWindow chatWindow;
     CutsceneManager cutsceneManager;
     AudioManager audioManager;
 
-    public static bool GetFlagState(string flag)
+    public bool GetFlagState(string flag)
     {
         if (flags.Keys.Contains(flag))
         {
@@ -60,13 +55,21 @@ public class GameManager : MonoBehaviour
         }
     }
 
-    public static void SetFlag(string flag)
+    public void SetFlag(string flag)
     {
         if (flags.ContainsKey(flag))
         {
             Debug.Log("Flag set: " + flag);
             flags[flag] = true;
             onFlagSet?.Invoke(flag);
+
+            Regex reg = new Regex(@"day([0-9])*Done");
+            Match match = reg.Match(flag);
+            if (match.Success)
+            {
+                int day = int.Parse(match.Groups[1].Value);
+                onDayEnd?.Invoke(day);
+            }
         }
         else
         {
@@ -84,8 +87,7 @@ public class GameManager : MonoBehaviour
         {
             singleton = this;
             DontDestroyOnLoad(gameObject);
-            saveFile = Application.persistentDataPath + "/SaveData.dat";
-            GetAllMessageGroupPreData();
+            GameDataManager.GetAllMessageGroupPreData();
         }
     }
 
@@ -93,12 +95,14 @@ public class GameManager : MonoBehaviour
     {
         onFlagSet += StartMessageGroups;
         SceneManager.sceneLoaded += OnSceneLoaded;
+        onDayEnd += AutoSave;
     }
 
     void OnDisable()
     {
         onFlagSet -= StartMessageGroups;
         SceneManager.sceneLoaded -= OnSceneLoaded;
+        onDayEnd -= AutoSave;
     }
 
     void OnSceneLoaded(Scene scene, LoadSceneMode loadSceneMode)
@@ -150,79 +154,6 @@ public class GameManager : MonoBehaviour
         }
     }
 
-    public void Save()
-    {
-        if (SceneManager.GetActiveScene().name != "Game")
-        {
-            Debug.LogError("Save should only be called in the Game scene");
-            return;
-        }
-        //things to be saved: flags, chat logs, player name, last message index
-        //chatLogs
-        StringBuilder builder = new StringBuilder();
-        StringWriter writer = new StringWriter(builder);
-        JsonTextWriter jsonWriter = new JsonTextWriter(writer);
-
-        //Format the existing chats in json form
-        jsonWriter.WriteStartObject();
-        foreach (GameObject log in chatWindow.dialogueWindows.Values)
-        {
-            Text[] messages = log.GetComponentInChildren<ScrollRect>()
-                .GetComponentsInChildren<Text>();
-            jsonWriter.WritePropertyName(log.name);
-            jsonWriter.WriteStartArray();
-            foreach (Text message in messages)
-            {
-                bool fromYou = message.alignment == TextAnchor.MiddleRight;
-                string messageText = (fromYou ? "_" : "") + message.text;
-                jsonWriter.WriteValue(messageText);
-            }
-            jsonWriter.WriteEndArray();
-        }
-        jsonWriter.WriteComment("Load-bearing dummy data!");
-
-        string messageJson = builder.ToString();
-
-        GameData data = new GameData(flags, messageJson, playerName);
-
-        //save data
-        BinaryFormatter bf = new BinaryFormatter();
-        FileStream file = File.Create(saveFile);
-        bf.Serialize(file, data);
-        file.Close();
-        Debug.Log("Game Saved!");
-    }
-
-    public void Load()
-    {
-        BinaryFormatter bf = new BinaryFormatter();
-        FileStream file = new FileStream(saveFile, FileMode.Open);
-        savedData = (GameData)bf.Deserialize(file);
-
-        //convert flag json data to dictionary
-        flags = savedData.GetFlags();
-
-        //set message groups as triggered
-        foreach (MessageGroupPreData group in messageGroupPreData)
-        {
-            bool triggered = true;
-            foreach (string flag in group.flags)
-            {
-                bool needsTrue = flag[0] != '!';
-                string curFlag = needsTrue ? flag : flag.Remove(0, 1);
-
-                if (flags[curFlag] != needsTrue)
-                {
-                    triggered = false;
-                    break;
-                }
-            }
-
-            group.triggered = triggered;
-        }
-        playerName = savedData.PlayerName;
-    }
-
     public void Quit()
     {
 #if UNITY_EDITOR
@@ -234,91 +165,20 @@ public class GameManager : MonoBehaviour
 
     private void ContinueGame()
     {
-        foreach (MessageGroupPreData messageGroup in messageGroupPreData)
-        {
-            if (messageGroup.triggered)
-            {
-                chatWindow.lastGroupsTriggered.Add(MessageGroup.GetGroupFromPreData(messageGroup));
-            }
-        }
-        //Unpack and display chat data
-        JsonReader reader = new JsonTextReader(new StringReader(savedData.ChatJsonData));
-        GameObject curDWindow = null;
-        string lastValue = "";
-        string curProp = "",
-            lastProp = "";
-        while (reader.Read())
-        {
-#nullable enable
-            object? curValue = reader.Value;
-#nullable disable
-            JsonToken curToken = reader.TokenType;
-            if (curValue != null)
-            {
-                switch (curToken)
-                {
-                    case JsonToken.PropertyName:
-                    case JsonToken.Comment: //At the end or start of a chat log of a chat log
-                        if (curProp != curValue.ToString())
-                        {
-                            lastProp = curProp;
-                            curProp = curValue.ToString();
-                        }
-                        if (lastValue != "") //At the end of a chat log, pick up the chat from where it left off
-                        {
-                            //Find the possible chats we could be starting from
-                            List<MessageGroup> groupsToStart = chatWindow.lastGroupsTriggered
-                                .Where(x => x.from == lastProp)
-                                .ToList();
-                            MessageGroup groupToStart = null;
+        //Display all the messages in the correct order
+        chatWindow.MassMessageSend(GameDataManager.savedData.ChatJsonData);
+        //Determine which message groups to start and where to start them
+        SetFlag("day" + (GameDataManager.savedData.LastDay + 1) + "Start");
+    }
 
-                            foreach (MessageGroup group in groupsToStart)
-                            {
-                                foreach (Message message in group.messages.Values)
-                                {
-                                    if (message.message == lastValue)
-                                    {
-                                        groupToStart = group;
-                                        break;
-                                    }
-                                }
-                                if (groupToStart != null)
-                                {
-                                    break;
-                                }
-                            }
-                            //Find the index we're starting from and start from there
-                            int indexToStart = groupToStart.messages
-                                .First(x => x.Value.message == lastValue)
-                                .Key;
-                            chatWindow.StartMessageGroup(groupToStart, indexToStart);
-                        }
-                        if (curToken == JsonToken.PropertyName) //At the start of a chat log
-                        {
-                            curDWindow = chatWindow.dialogueWindows[curValue.ToString()];
-                            lastValue = "";
-                        }
-                        break;
-                    case JsonToken.String: //At a chat message
-                        chatWindow.SendMessageImmediate(
-                            curDWindow,
-                            curValue.ToString()[0] == '_',
-                            curValue.ToString()
-                        );
-                        lastValue = curValue.ToString();
-                        break;
-                    default:
-                        Debug.LogWarning("Unknown Token: " + curToken);
-                        break;
-                }
-            }
-        }
-        audioManager.PlaySound("Fan Whirring", true);
+    void AutoSave(int day)
+    {
+        GameDataManager.Save(chatWindow, day);
     }
 
     private void StartMessageGroups(string flagSet)
     {
-        foreach (MessageGroupPreData group in messageGroupPreData)
+        foreach (MessageGroupPreData group in GameDataManager.messageGroupPreData)
         {
             if (!group.flags.Contains(flagSet))
             {
@@ -348,106 +208,14 @@ public class GameManager : MonoBehaviour
         }
     }
 
-    private void GetAllMessageGroupPreData()
+    public string GetVariable(string variableName)
     {
-        List<string> filePaths = Directory
-            .EnumerateFiles(
-                Application.streamingAssetsPath + "/Message Groups",
-                "*.chat",
-                SearchOption.AllDirectories
-            )
-            .ToList();
-        foreach (string path in filePaths)
+        switch (variableName)
         {
-            string[] pathList = path.Split(
-                new char[] { '/', '\\' },
-                StringSplitOptions.RemoveEmptyEntries
-            );
-            string name = pathList[pathList.Length - 1].Split('.')[0];
-
-            string[] contents = File.ReadAllText(path).Split('\n');
-            string[] flags = new string[0];
-
-            foreach (string line in contents)
-            {
-                if (line.Contains("FLAGSREQUIRED"))
-                {
-                    flags = line.Split(':')[1].Split(',');
-                    for (int i = 0; i < flags.Length; i++)
-                    {
-                        flags[i] = flags[i].RemoveWhitespace();
-                    }
-                    break;
-                }
-            }
-
-            MessageGroupPreData preData = new MessageGroupPreData(name, flags);
-            messageGroupPreData.Add(preData);
+            case "playerName":
+                return playerName;
+            default:
+                return "";
         }
-    }
-}
-
-[Serializable]
-public class GameData
-{
-    public string PlayerName { get; set; }
-    public string ChatJsonData { get; set; }
-
-    readonly string flagsJsonData;
-
-    public GameData(Dictionary<string, bool> flags, string chatJsonData, string playerName)
-    {
-        StringBuilder builder = new StringBuilder();
-        StringWriter writer = new StringWriter(builder);
-        JsonTextWriter jsonWriter = new JsonTextWriter(writer);
-        jsonWriter.WriteStartObject();
-        foreach (KeyValuePair<string, bool> flag in flags)
-        {
-            jsonWriter.WritePropertyName(flag.Key);
-            jsonWriter.WriteValue(flag.Value);
-        }
-        jsonWriter.WriteEndObject();
-
-        flagsJsonData = builder.ToString();
-
-        this.ChatJsonData = chatJsonData;
-        this.PlayerName = playerName;
-    }
-
-    public Dictionary<string, bool> GetFlags()
-    {
-        Dictionary<string, bool> output = new Dictionary<string, bool>();
-
-        StringReader stringReader = new StringReader(flagsJsonData);
-        JsonReader jsonReader = new JsonTextReader(stringReader);
-
-        string lastProp = "";
-
-        while (jsonReader.Read())
-        {
-            JsonToken token = jsonReader.TokenType;
-#nullable enable
-            object? value = jsonReader.Value;
-#nullable disable
-            if (value != null)
-            {
-                if (token == JsonToken.PropertyName)
-                {
-                    lastProp = value.ToString();
-                }
-                else if (token == JsonToken.Boolean)
-                {
-                    if (!output.ContainsKey(lastProp) && lastProp != "")
-                    {
-                        output.Add(lastProp, (bool)value);
-                    }
-                    else
-                    {
-                        Debug.LogWarning("Value already exists: " + lastProp);
-                    }
-                }
-            }
-        }
-        return output;
     }
 }

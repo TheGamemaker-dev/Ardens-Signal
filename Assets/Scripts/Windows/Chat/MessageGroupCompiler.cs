@@ -1,6 +1,7 @@
-using System.Text.RegularExpressions;
 using System.Collections.Generic;
 using UnityEngine;
+using System;
+using System.Text.RegularExpressions;
 using System.Reflection;
 
 public static class MessageGroupCompiler
@@ -11,143 +12,205 @@ public static class MessageGroupCompiler
             new char[] { '\n', '\r' },
             System.StringSplitOptions.RemoveEmptyEntries
         );
-        Dictionary<int, string> jumps = new Dictionary<int, string>();
-        Dictionary<int, Message> messages = new Dictionary<int, Message>();
-        Dictionary<int, string> instructions = new Dictionary<int, string>();
-        Dictionary<int, string> lineTypes = new Dictionary<int, string>();
         string from = "";
-        string[] flagsRequired = new string[] { };
+        List<string> flagsRequired = new List<string>();
+        Message rootMessage = new Message();
 
-        for (int i = 0; i < fullFile.Length; i++)
+        int lineNum = 0;
+        while (fullFile[lineNum][0] == '~') //Preprocess instructions
         {
-            string line = fullFile[i];
-            line = line.RemoveLineBreaks();
-
-            //if it starts with \t (tab), then its a message or response
-            if (line[0] == '\t')
+            string line = fullFile[lineNum].Substring(1);
+            string[] args = line.Split(':');
+            switch (args[0])
             {
-                if (line[1] != '\t')
-                {
-                    Message message = new Message();
-                    int iChange = 0;
-                    //check for choices
-                    if (line[line.Length - 1] == '=') //a message with a = at the end has choices
+                case "FROM":
+                    if (from != "")
                     {
-                        List<Choice> choices = new List<Choice>();
-                        line = line.Remove(line.Length - 1);
-                        int lineChangeCheck = 1;
-                        while (fullFile[i + lineChangeCheck][2] == '+') //third character of a choice line is always a +
-                        {
-                            string choiceLine = fullFile[i + lineChangeCheck].Substring(3);
-                            string[] choiceParams = choiceLine.Split('|');
-                            Choice choice;
-
-                            if (choiceParams.Length == 1)
-                            {
-                                choice = new Choice(choiceParams[0].RemoveTabs(), "");
-                            }
-                            else
-                            {
-                                choice = new Choice(
-                                    choiceParams[0].RemoveTabs(),
-                                    choiceParams[1].RemoveLineBreaks()
-                                );
-                            }
-                            choices.Add(choice);
-                            lineTypes.Add(i + lineChangeCheck, "choice");
-                            lineChangeCheck++;
-                        }
-                        message.choices = choices.ToArray();
-                        iChange = lineChangeCheck - 1;
+                        Debug.LogError("FROM already set in " + file.name);
                     }
+                    from = args[1];
+                    break;
+                case "FLAGSREQUIRED":
+                    flagsRequired.Add(args[1]);
+                    break;
+                case "SETFLAG":
+                case "PLAYSOUND":
+                    Debug.LogError(
+                        "Should not be encountering " + args[0] + " at this point in " + file.name
+                    );
+                    break;
+                default:
+                    Debug.LogError("Unknown instruction " + args[0] + " in " + file.name);
+                    break;
+            }
+            lineNum++;
+        }
 
-                    //check for jump, a message will never have both a jump and choices
-                    string[] messageParams = line.Split('|');
-                    if (messageParams[0] != line)
+        while (fullFile[lineNum][0] != '\t') //Skip blank lines
+        {
+            lineNum++;
+        }
+
+        rootMessage = BuildMessageTree(fullFile, lineNum);
+
+        MessageGroup output = new MessageGroup(
+            from,
+            flagsRequired.ToArray(),
+            file.name,
+            rootMessage
+        );
+
+        return output;
+    }
+
+    static Message BuildMessageTree(string[] file, int lineNumber)
+    {
+        //Base case
+        if (lineNumber >= file.Length)
+        {
+            return null;
+        }
+
+        Message output = new Message();
+        List<Choice> choices = new List<Choice>();
+
+        //Get line
+        string line = file[lineNumber];
+
+        if (line[0] == '~') //Check if its an instruction
+        {
+            line = line.Substring(1);
+            string[] args = line.Split(':');
+            switch (args[0])
+            {
+                case "SETFLAG":
+                    output.setFlag = args[1];
+                    break;
+                case "PLAYSOUND":
+                    output.playSound = args[1];
+                    break;
+                case "FROM":
+                case "FLAGSREQUIRED":
+                    throw new Exception(
+                        "Should not be encountering " + args[0] + " at this point in the file"
+                    );
+                default:
+                    throw new Exception(
+                        "Unknown instruction " + args[0] + " in " + file[lineNumber]
+                    );
+            }
+            lineNumber++;
+            line = file[lineNumber];
+        }
+
+        if (line[0] == '\t') //Check if its a message
+        {
+            line = line.Substring(1);
+            line = ReplaceVariables(line);
+
+            if (line[0] == '_')
+            {
+                output.fromYou = true;
+                line = line.Substring(1);
+            }
+
+            if (line[line.Length - 1] == '=') //Check for choices
+            {
+                line = line.Substring(0, line.Length - 1);
+                output.message = line;
+                int choiceLineNum = lineNumber + 1;
+                string choiceLine = file[choiceLineNum].Substring(2);
+                while (choiceLine[0] == '+')
+                {
+                    choiceLine = choiceLine.Substring(1);
+                    Choice choice = new Choice();
+                    bool hasJump = choiceLine.Contains("|");
+                    if (hasJump)
                     {
-                        message.message = messageParams[0].RemoveTabs();
-                        message.jumpTo = messageParams[1].RemoveLineBreaks();
+                        string[] jumpArgs = choiceLine.Split('|');
+                        choice.choiceMessage = jumpArgs[0];
+                        int jumpLine = FindJump(file, jumpArgs[1]);
+
+                        if (jumpLine == -1)
+                        {
+                            throw new Exception("Could not find jump target " + jumpArgs[1]);
+                        }
+
+                        choice.jumpTo = BuildMessageTree(file, jumpLine + 1);
+                        choices.Add(choice);
                     }
                     else
                     {
-                        message.message = new Regex(@"=+")
-                            .Replace(line.RemoveTabs(), "")
-                            .RemoveLineBreaks();
-                    }
-                    string messageWithDVar = message.message;
-                    //modify message for dyanmic variables
-                    for (int j = 0; j < message.message.Length; j++)
-                    {
-                        if (message.message[j] == '{')
+                        choice.choiceMessage = choiceLine;
+                        int nextMessageLine = choiceLineNum + 1;
+                        while (file[nextMessageLine][1] == '\t')
                         {
-                            int k = 1;
-                            string variable = "";
-                            while (message.message[j + k] != '}')
-                            {
-                                variable += message.message[j + k];
-                                k++;
-                            }
-                            FieldInfo varInfo = GameManager.singleton.GetType().GetField(variable);
-                            string varValue = varInfo.GetValue(GameManager.singleton).ToString();
-
-                            messageWithDVar = messageWithDVar.Replace(
-                                "{" + variable + "}",
-                                varValue
-                            );
+                            nextMessageLine++;
                         }
+                        choice.jumpTo = BuildMessageTree(file, nextMessageLine);
+                        choices.Add(choice);
                     }
-                    message.message = messageWithDVar;
-
-                    messages.Add(i, message);
-                    lineTypes.Add(i, "message");
-                    i += iChange;
+                    choiceLineNum++;
+                    choiceLine =
+                        choiceLineNum < file.Length ? file[choiceLineNum].Substring(2) : null;
                 }
             }
-            else if (line[0] == '~') //it's an instruction
+            else if (line.Contains("|"))
             {
-                string[] instructionsParams = line.Substring(1).Split(':');
-                switch (instructionsParams[0].RemoveLineBreaks())
+                string[] args = line.Split('|');
+                Choice choice = new Choice();
+                output.message = args[0];
+                int jumpLine = FindJump(file, args[1]);
+                if (jumpLine == -1)
                 {
-                    case "FROM":
-                        from = instructionsParams[1].RemoveLineBreaks();
-                        break;
-                    case "FLAGSREQUIRED":
-                        string[] flags = instructionsParams[1].Split(',');
-                        for (int j = 0; j < flags.Length; j++)
-                        {
-                            flags[j] = flags[j].RemoveLineBreaks();
-                        }
-                        flagsRequired = flags;
-                        break;
-                    case "SETFLAG":
-                    case "STOP":
-                    case "PLAYSOUND":
-                        break;
-                    default:
-                        throw new UnityException(
-                            "Instruction not set properly: " + instructionsParams[0]
-                        );
+                    throw new Exception("Could not find jump target " + args[1]);
                 }
-                instructions.Add(i, line.RemoveLineBreaks().Substring(1));
-                lineTypes.Add(i, "instruction");
+                choice.jumpTo = BuildMessageTree(file, jumpLine + 1);
+                choices.Add(choice);
             }
-            else //its a jump
+            else
             {
-                string jump = line.RemoveLineBreaks().Remove(line.Length - 1);
-                jumps.Add(i, jump);
-                lineTypes.Add(i, "jump");
+                output.message = line;
+                Choice choice = new Choice();
+                choice.jumpTo = BuildMessageTree(file, lineNumber + 1);
+                choices.Add(choice);
             }
         }
 
-        MessageGroup output = new MessageGroup(
-            jumps,
-            messages,
-            instructions,
-            lineTypes,
-            from,
-            flagsRequired,
-            file.name
-        );
+        output.choices = choices.ToArray();
+        return output;
+    }
+
+    static int FindJump(string[] file, string jumpTarget)
+    {
+        string pattern = jumpTarget + ":";
+
+        for (int i = 0; i < file.Length; i++)
+        {
+            if (Regex.IsMatch(file[i], pattern))
+            {
+                return i;
+            }
+        }
+        return -1;
+    }
+
+    static string ReplaceVariables(string input)
+    {
+        if (!input.Contains("{"))
+        {
+            return input;
+        }
+
+        string output = "";
+        int start = input.IndexOf('{');
+        int end = input.IndexOf('}');
+        string variable = input.Substring(start + 1, end - start - 1);
+
+        output += input.Substring(0, start);
+        output += GameManager.singleton.GetVariable(variable);
+        output += input.Substring(end + 1);
+
         return output;
     }
 }

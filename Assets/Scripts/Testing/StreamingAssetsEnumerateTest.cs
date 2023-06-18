@@ -20,6 +20,8 @@ public class StreamingAssetsEnumerateTest : MonoBehaviour
 
         string content = File.ReadAllText(path);
 
+        MessageGroup group = MessageGroupCompiler.Compile(new TextAsset(content));
+
         Debug.Log(content);
     }
 }

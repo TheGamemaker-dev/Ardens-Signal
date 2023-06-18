@@ -20,7 +20,7 @@ public class StartMenu : MonoBehaviour
         UpdateButton("");
         manager = FindObjectOfType<AudioManager>();
         manager.PlaySound("Dream", true);
-        continueButton.interactable = File.Exists(GameManager.saveFile);
+        continueButton.interactable = File.Exists(GameDataManager.saveFile);
     }
 
     public void UpdateButton(string value)
@@ -37,7 +37,14 @@ public class StartMenu : MonoBehaviour
     {
         GameManager.singleton.playerName = inputField.text;
         GameManager.singleton.isNewGame = true;
-        File.Delete(GameManager.saveFile);
+        File.Delete(GameDataManager.saveFile);
+        StartGame();
+    }
+
+    public void ContinueGame()
+    {
+        GameDataManager.Load();
+        GameManager.singleton.isNewGame = false;
         StartGame();
     }
 

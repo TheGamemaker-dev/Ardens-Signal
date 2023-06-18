@@ -3,12 +3,10 @@
 start:
 	An error has been detected. 
 	There may be malware hindering the startup process. 
-	Please restart to proceed.|restart
-restart:
+	Please restart to proceed.
 ~PLAYSOUND:Corruption
 	Reply 'restart' to restart.=
 		+restart|error
-		+no|restart
 error:
 	I̷ ̴w̵a̸s̶ ̴n̸o̵t̴ ̶a̶b̶l̵e̸ to restart. Please reply 'restart' to restart.=
 		+restart

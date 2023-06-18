@@ -15,5 +15,6 @@ response1:
 response2:
 	My sources say no.|end
 end:
+	Thank you for using 8ball, a Signal application.
 ~SETFLAG:8ball
 ~STOP

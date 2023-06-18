@@ -805,21 +805,9 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 1429178123}
-        m_TargetAssemblyTypeName: GameManager, Assembly-CSharp
-        m_MethodName: Load
-        m_Mode: 1
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 1
-        m_CallState: 2
       - m_Target: {fileID: 1959180825}
-        m_TargetAssemblyTypeName: StartMenu, Assembly-CSharp
-        m_MethodName: StartGame
+        m_TargetAssemblyTypeName: StartMenu, ScriptsAssembly
+        m_MethodName: ContinueGame
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -1689,17 +1677,6 @@ PrefabInstance:
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 34936a41844642a48a64368c91a6a167, type: 3}
---- !u!114 &1429178123 stripped
-MonoBehaviour:
-  m_CorrespondingSourceObject: {fileID: 7085784441711384404, guid: 34936a41844642a48a64368c91a6a167, type: 3}
-  m_PrefabInstance: {fileID: 1429178122}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: f83ffe9b4fd181f4db16f738ac274766, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!224 &1463353613 stripped
 RectTransform:
   m_CorrespondingSourceObject: {fileID: 5176127889064035869, guid: d53549e99575ee549b9add05c3cf7241, type: 3}

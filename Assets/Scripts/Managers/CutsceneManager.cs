@@ -23,12 +23,12 @@ public class CutsceneManager : MonoBehaviour
 
     void OnEnable()
     {
-        GameManager.onFlagSet += OnEndDay;
+        GameManager.onDayEnd += OnEndDay;
     }
 
     void OnDisable()
     {
-        GameManager.onFlagSet -= OnEndDay;
+        GameManager.onDayEnd -= OnEndDay;
     }
 
     public IEnumerator StartCutscene(int day)
@@ -59,22 +59,15 @@ public class CutsceneManager : MonoBehaviour
         else
         {
             yield return new WaitForSeconds(((float)player.clip.length));
-            GameManager.SetFlag("day" + day.ToString() + "Start");
+            GameManager.singleton.SetFlag("day" + day.ToString() + "Start");
             fade.FadeIn();
         }
         transform.SetAsFirstSibling();
         coverPanel.enabled = true;
     }
 
-    void OnEndDay(string dayDone)
+    void OnEndDay(int day)
     {
-        bool hasProperSyntax = dayDone.Remove(3) == "day" && dayDone.Substring(4) == "Done";
-        bool hasNum = int.TryParse(dayDone[3].ToString(), out int day);
-        bool triggeredYet = GameManager.GetFlagState("day" + (day + 1) + "Start");
-
-        if (hasProperSyntax && hasNum && !triggeredYet)
-        {
-            StartCoroutine(StartCutscene(day + 1));
-        }
+        StartCoroutine(StartCutscene(day + 1));
     }
 }

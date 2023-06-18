@@ -1,12 +1,9 @@
 ~FROM:Signal
 ~FLAGSREQUIRED:aiInstalled
-start:
-	Hello, I am Signal, your personal AI assistant.|install
-install:
+
+	Hello, I am Signal, your personal AI assistant.
 	Reply 'install' to install Signal.=
-		+install|yes
-		+no|install
-yes:
+		+install
 	Installing: 0%
 	Installing: 15%
 	Installing: 25%
@@ -19,19 +16,19 @@ yes:
 	Done!
 	Thank you for choosing Signal.
 	Hello {playerName}!
-	Let's try some basic commands|weather
-no:
-	Let's try again|weather
+	Let's try some basic commands
+	Try asking me something=
+		+What is the weather like?|weather
+		+Do I have anyting on my calendar tomorrow?|calendar
 weather:
-	Try asking me about the weather=
-		+What is the weather like?|weatherYes
-		+no|no
-weatherYes:
 	In your area it is currently 68F
 	The high for today is 80F
-	And the low is 64F 
-	That was great! Good job!
-	I need some more time to finalize setup
-	Come back in a bit and so I may further assist you
+	And the low is 64F|end
+calendar:
+	You have "Class" scheduled tomorrow at 9:00 AM
+	Other than that you have nothing scheduled.|end
+end:
+	That's all for now, I need a little more time to set up.
 ~SETFLAG:aiSetup
-~STOP
+	You can talk to me again later.
+
